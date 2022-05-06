@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/songjiayang/imgcloud/api/server"
-	"github.com/songjiayang/imgcloud/internal/pkg/config"
+	"github.com/songjiayang/imagecloud/api/server"
+	"github.com/songjiayang/imagecloud/internal/pkg/config"
 )
 
 func main() {

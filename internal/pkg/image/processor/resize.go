@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/songjiayang/imgcloud/internal/pkg/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
 )
 
 type Resize struct {

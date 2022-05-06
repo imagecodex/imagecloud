@@ -8,9 +8,9 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/gin-gonic/gin"
-	"github.com/songjiayang/imgcloud/internal/pkg/config"
-	"github.com/songjiayang/imgcloud/internal/pkg/image/loader"
-	"github.com/songjiayang/imgcloud/internal/pkg/image/processor"
+	"github.com/songjiayang/imagecloud/internal/pkg/config"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/loader"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor"
 )
 
 type Image struct {
