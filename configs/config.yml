@@ -1,0 +1,5 @@
+enable_sites:
+  localhost:8080:
+    vendor: aliyun
+    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    bucket: image-demo
