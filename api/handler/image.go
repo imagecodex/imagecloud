@@ -82,6 +82,8 @@ func (i *Image) resolveObjectPrefix(c *gin.Context) (prefix string, ok bool) {
 }
 
 func (*Image) process(c *gin.Context, args *types.CmdArgs) {
+	defer args.Img.Close()
+
 	pQuery := c.Query("x-oss-process")
 	if pQuery == "" {
 		pQuery = c.Query("x-amz-process")

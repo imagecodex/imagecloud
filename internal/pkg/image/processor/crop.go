@@ -49,32 +49,9 @@ func (*Crop) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 
 	metadata := args.Img.Metadata()
 	imgHeight, imgWidth := metadata.Height, metadata.Width
-
-	switch g {
-	case "north":
-		x = imgWidth/2 + x
-	case "ne":
-		x = imgWidth - x
-	case "west":
-		y = imgHeight/2 + y
-	case "center":
-		y = imgHeight/2 + y
-		x = imgWidth/2 + x
-	case "east":
-		y = imgHeight/2 + y
-		x = imgWidth/2 - x
-	case "sw":
-		y = imgHeight - y
-	case "south":
-		y = imgHeight - y
-		x = imgWidth/2 + x
-	case "se":
-		y = imgHeight - y
-		x = imgWidth - x
-	}
-
-	x = mustInRange(0, imgWidth, x)
-	y = mustInRange(0, imgHeight, y)
+	x, y = getRealOffset(imgWidth, imgHeight, x, y, g, nil)
+	x = ensureInRange(0, imgWidth, x)
+	y = ensureInRange(0, imgHeight, y)
 
 	if x+w > imgWidth {
 		w = imgWidth - x
@@ -87,14 +64,4 @@ func (*Crop) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	log.Printf("crop with x=%d, y=%d, w=%d, h=%d", x, y, w, h)
 
 	return nil, args.Img.Crop(x, y, w, h)
-}
-
-func mustInRange(min, max, v int) int {
-	if v < min {
-		v = min
-	} else if v > max {
-		v = max
-	}
-
-	return v
 }
