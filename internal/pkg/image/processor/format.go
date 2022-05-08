@@ -6,39 +6,32 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
 )
 
-type Format struct {
-	Params []string
-}
+type Format string
 
-func NewFormat(params []string) Processor {
-	return &Format{
-		Params: params,
-	}
-}
-
-func (_ *Format) Name() string {
-	return "format"
-}
-
-func (f *Format) Process(_ *vips.ImageRef, ep *vips.ExportParams) (*vips.ImageRef, *metadata.Info, error) {
-	if len(f.Params) != 1 {
-		return nil, nil, errors.New("invalid format params")
+func (*Format) Process(args *types.CmdArgs) (*metadata.Info, error) {
+	if len(args.Params) != 1 {
+		return nil, errors.New("invalid format params")
 	}
 
-	switch f.Params[0] {
+	var format vips.ImageType
+
+	switch args.Params[0] {
 	case "jpg", "jpeg":
-		ep.Format = vips.ImageTypeJPEG
+		format = vips.ImageTypeJPEG
 	case "webp":
-		ep.Format = vips.ImageTypeWEBP
+		format = vips.ImageTypeWEBP
 	case "png":
-		ep.Format = vips.ImageTypePNG
+		format = vips.ImageTypePNG
 	case "gif":
-		ep.Format = vips.ImageTypeGIF
+		format = vips.ImageTypeGIF
 	default:
-		return nil, nil, fmt.Errorf("%s image type not support", f.Params[0])
+		return nil, fmt.Errorf("%s image type not support", args.Params[0])
 	}
 
-	return nil, nil, nil
+	args.Ep.Format = format
+
+	return nil, nil
 }

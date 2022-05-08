@@ -20,9 +20,15 @@ func NewServer(cfg *config.Config) *Server {
 
 func (s *Server) Listen() error {
 	// register routes
-	s.GET("/:key", s.Image.Get)
+	s.GET("/*key", func(c *gin.Context) {
+		if c.Param("key") == "/" {
+			s.Pong(c)
+			return
+		}
+
+		s.Image.Get(c)
+	})
 	s.POST("/", s.Image.Post)
-	s.GET("/", s.Pong)
 
 	return s.Run()
 }

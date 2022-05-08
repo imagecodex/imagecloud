@@ -3,17 +3,14 @@ package processor
 import (
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
 )
 
-type Info struct{}
+type Info string
 
-func (*Info) Name() string {
-	return "info"
-}
-
-func (*Info) Process(img *vips.ImageRef, _ *vips.ExportParams) (*vips.ImageRef, *metadata.Info, error) {
-	info := img.Metadata()
-	return img, &metadata.Info{
+func (*Info) Process(args *types.CmdArgs) (*metadata.Info, error) {
+	info := args.Img.Metadata()
+	return &metadata.Info{
 		Format: vips.ImageTypes[info.Format],
 		Height: info.Height,
 		Width:  info.Width,

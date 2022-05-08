@@ -11,6 +11,7 @@ import (
 	"github.com/songjiayang/imagecloud/internal/pkg/config"
 	"github.com/songjiayang/imagecloud/internal/pkg/image/loader"
 	"github.com/songjiayang/imagecloud/internal/pkg/image/processor"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
 )
 
 type Image struct {
@@ -18,36 +19,13 @@ type Image struct {
 }
 
 func (i *Image) Get(c *gin.Context) {
+	objectPrefix, ok := i.resolveObjectPrefix(c)
+	if !ok {
+		return
+	}
+
 	objectKey := c.Param("key")
-
-	if objectKey == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "empty object key input",
-		})
-
-		return
-	}
-
-	host := c.Request.Host
-	if host == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "invalid host header",
-		})
-
-		return
-	}
-
-	var objectUrl string
-
-	if enableSite := i.enableSites[host]; enableSite == nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "missing enable site setting for host " + host,
-		})
-		return
-	} else {
-		objectUrl = fmt.Sprintf("%s/%s/%s", enableSite.Endpoint, enableSite.Bucket, objectKey)
-	}
-
+	objectUrl := objectPrefix + objectKey
 	log.Printf("get image with url key %s \n", objectUrl)
 
 	imgRef, err := loader.LoadWithUrl(objectUrl)
@@ -59,7 +37,10 @@ func (i *Image) Get(c *gin.Context) {
 		return
 	}
 
-	i.process(c, imgRef)
+	i.process(c, &types.CmdArgs{
+		Img:          imgRef,
+		ObjectPrefix: objectPrefix,
+	})
 }
 
 func (i *Image) Post(c *gin.Context) {
@@ -79,10 +60,28 @@ func (i *Image) Post(c *gin.Context) {
 		return
 	}
 
-	i.process(c, imgRef)
+	i.process(c, &types.CmdArgs{
+		Img: imgRef,
+	})
 }
 
-func (*Image) process(c *gin.Context, img *vips.ImageRef) {
+func (i *Image) resolveObjectPrefix(c *gin.Context) (prefix string, ok bool) {
+	enableSite := i.enableSites[c.Request.Host]
+	if enableSite == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "missing enable site setting for host " + c.Request.Host,
+		})
+		return
+	}
+
+	if enableSite.Bucket == "" {
+		return enableSite.Endpoint, true
+	}
+
+	return fmt.Sprintf("%s/%s", enableSite.Endpoint, enableSite.Bucket), true
+}
+
+func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 	pQuery := c.Query("x-oss-process")
 	if pQuery == "" {
 		pQuery = c.Query("x-amz-process")
@@ -104,22 +103,16 @@ func (*Image) process(c *gin.Context, img *vips.ImageRef) {
 
 	// add defautl jpg export params
 	ep := vips.NewDefaultJPEGExportParams()
-	ep.Format = img.Metadata().Format
+	ep.Format = args.Img.Metadata().Format
+	args.Ep = ep
 
 	for _, cmd := range cmds {
 		splits := strings.Split(cmd, ",")
+		name := splits[0]
+		args.Params = splits[1:]
 
-		pNewFunc := processor.ProcessorNewMap[splits[0]]
-		if pNewFunc == nil {
-			log.Printf("now processor registor for cmd %s \n", cmd)
-			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": "invalid processor command",
-			})
-			return
-		}
-
-		p := pNewFunc(splits[1:])
-		_, info, err := p.Process(img, ep)
+		// run cmd
+		info, err := processor.Excute(name, args)
 		if err != nil {
 			log.Printf("image process with cmd %s failed with error: %v\n", cmd, err)
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -129,13 +122,13 @@ func (*Image) process(c *gin.Context, img *vips.ImageRef) {
 		}
 
 		// if info processor, return the result
-		if p.Name() == "info" {
+		if name == "info" {
 			c.JSON(http.StatusOK, info)
 			return
 		}
 	}
 
-	buf, info, err := img.Export(ep)
+	buf, info, err := args.Img.Export(args.Ep)
 	if err != nil {
 		log.Printf("export image with error; %v \n", err)
 		c.JSON(http.StatusBadRequest, gin.H{

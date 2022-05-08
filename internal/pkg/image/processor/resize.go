@@ -8,23 +8,12 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
 )
 
-type Resize struct {
-	Params []string
-}
+type Resize string
 
-func NewResize(params []string) Processor {
-	return &Resize{
-		Params: params,
-	}
-}
-
-func (*Resize) Name() string {
-	return "resize"
-}
-
-func (r *Resize) Process(img *vips.ImageRef, _ *vips.ExportParams) (*vips.ImageRef, *metadata.Info, error) {
+func (*Resize) Process(args *types.CmdArgs) (*metadata.Info, error) {
 	var (
 		m     string
 		w, h  int
@@ -34,15 +23,15 @@ func (r *Resize) Process(img *vips.ImageRef, _ *vips.ExportParams) (*vips.ImageR
 		resizeMode = vips.SizeForce
 	)
 
-	log.Printf("resize process with params %#v \n", r.Params)
+	log.Printf("resize process with params %#v \n", args.Params)
 
 	var err error
 
-	for _, param := range r.Params {
+	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
 
 		if len(splits) != 2 {
-			return nil, nil, errors.New("invalid resize params")
+			return nil, errors.New("invalid resize params")
 		}
 
 		switch splits[0] {
@@ -57,13 +46,13 @@ func (r *Resize) Process(img *vips.ImageRef, _ *vips.ExportParams) (*vips.ImageR
 		}
 
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
-	imgHeight, imgWidth := img.PageHeight(), img.Width()
+	imgHeight, imgWidth := args.Img.PageHeight(), args.Img.Width()
 	if limit == 1 && (imgHeight > h || imgWidth > w) {
-		return img, nil, nil
+		return nil, nil
 	}
 
 	switch m {
@@ -84,5 +73,5 @@ func (r *Resize) Process(img *vips.ImageRef, _ *vips.ExportParams) (*vips.ImageR
 	}
 
 	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d \n", m, w, h, resizeMode)
-	return img, nil, img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
+	return nil, args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
 }

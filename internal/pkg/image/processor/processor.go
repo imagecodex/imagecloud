@@ -1,24 +1,37 @@
 package processor
 
 import (
-	"github.com/davidbyttow/govips/v2/vips"
+	"fmt"
+	"sync"
+
 	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
 )
 
 type Processor interface {
-	Name() string
-	Process(*vips.ImageRef, *vips.ExportParams) (*vips.ImageRef, *metadata.Info, error)
+	Process(*types.CmdArgs) (*metadata.Info, error)
 }
 
-type ProcessorNewFunc func(params []string) Processor
+var (
+	pMaps map[string]Processor
+	once  sync.Once
+)
 
-var ProcessorNewMap = map[string]ProcessorNewFunc{
-	"resize":  NewResize,
-	"format":  NewFormat,
-	"quality": NewQuality,
-	"info":    func([]string) Processor { return &Info{} },
+func init() {
+	once.Do(func() {
+		pMaps = map[string]Processor{
+			"format":  new(Format),
+			"info":    new(Info),
+			"quality": new(Quality),
+			"resize":  new(Resize),
+		}
+	})
 }
 
-func registerFunc(name string, pf ProcessorNewFunc) {
-	ProcessorNewMap[name] = pf
+func Excute(name string, args *types.CmdArgs) (*metadata.Info, error) {
+	if p := pMaps[name]; p == nil {
+		return nil, fmt.Errorf("no prossor for command %s", name)
+	} else {
+		return p.Process(args)
+	}
 }
