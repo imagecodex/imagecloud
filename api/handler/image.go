@@ -116,7 +116,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 		if err != nil {
 			log.Printf("image process with cmd %s failed with error: %v\n", cmd, err)
 			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": "command process failed",
+				"msg": "command process failed with error: " + err.Error(),
 			})
 			return
 		}

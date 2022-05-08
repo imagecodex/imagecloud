@@ -1,4 +1,4 @@
-# github.com/davidbyttow/govips/v2 v2.11.0
+# github.com/davidbyttow/govips/v2 v2.11.0 => ./third_party/govips/v2
 ## explicit
 github.com/davidbyttow/govips/v2/vips
 # github.com/gin-contrib/sse v0.1.0
@@ -66,4 +66,4 @@ golang.org/x/text/transform
 # gopkg.in/yaml.v2 v2.2.8
 ## explicit
 gopkg.in/yaml.v2
-# github.com/davidbyttow/govips => ./third_party/govips
+# github.com/davidbyttow/govips/v2 => ./third_party/govips/v2
