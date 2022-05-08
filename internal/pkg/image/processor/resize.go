@@ -13,9 +13,9 @@ import (
 
 type Resize string
 
-func (*Resize) Process(args *types.CmdArgs) (*metadata.Info, error) {
+func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	var (
-		m     string
+		m     = "lfit"
 		w, h  int
 		limit = 1
 
@@ -24,8 +24,6 @@ func (*Resize) Process(args *types.CmdArgs) (*metadata.Info, error) {
 	)
 
 	log.Printf("resize process with params %#v \n", args.Params)
-
-	var err error
 
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
@@ -50,9 +48,20 @@ func (*Resize) Process(args *types.CmdArgs) (*metadata.Info, error) {
 		}
 	}
 
+	// do noting
+	if w == 0 && h == 0 {
+		return
+	}
+
 	imgHeight, imgWidth := args.Img.PageHeight(), args.Img.Width()
 	if limit == 1 && (imgHeight > h || imgWidth > w) {
 		return nil, nil
+	}
+
+	if w == 0 {
+		w = h * imgWidth / imgHeight
+	} else if h == 0 {
+		h = w * imgHeight / imgWidth
 	}
 
 	switch m {
