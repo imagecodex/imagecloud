@@ -20,12 +20,15 @@ var (
 func init() {
 	once.Do(func() {
 		pMaps = map[string]Processor{
-			"resize":    new(Resize),
-			"watermark": new(Watermark),
-			"crop":      new(Crop),
-			"format":    new(Format),
-			"info":      new(Info),
-			"quality":   new(Quality),
+			"resize":      new(Resize),
+			"watermark":   new(Watermark),
+			"crop":        new(Crop),
+			"format":      new(Format),
+			"info":        new(Info),
+			"auto-orient": new(AutoRotate),
+			"quality":     new(Quality),
+			"blur":        new(Blur),
+			"rotate":      new(Rotate),
 		}
 	})
 }
