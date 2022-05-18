@@ -1,6 +1,6 @@
 package handler
 
-import "github.com/songjiayang/imagecloud/internal/pkg/config"
+import "github.com/songjiayang/imagecloud/internal/config"
 
 type Handler struct {
 	Image *Image

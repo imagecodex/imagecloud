@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/songjiayang/imagecloud/api/server"
-	"github.com/songjiayang/imagecloud/internal/pkg/config"
+	"github.com/songjiayang/imagecloud/internal/config"
 )
 
 var (

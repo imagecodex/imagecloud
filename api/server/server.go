@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/songjiayang/imagecloud/api/handler"
-	"github.com/songjiayang/imagecloud/internal/pkg/config"
+	"github.com/songjiayang/imagecloud/internal/config"
 )
 
 type Server struct {

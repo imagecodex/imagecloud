@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/songjiayang/imagecloud/internal/pkg/image/metadata"
-	"github.com/songjiayang/imagecloud/internal/pkg/image/processor/types"
+	"github.com/songjiayang/imagecloud/internal/image/metadata"
+	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
 
 type Resize string
