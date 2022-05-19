@@ -19,11 +19,11 @@ func base64UrlDecodeString(encodedStr string) (string, error) {
 	return string(buf), nil
 }
 
-func getRealOffset(imgWidth, imgHeight, x, y int, g string, boxInfo *vips.ImageMetadata) (int, int) {
+func getRealOffset(imgWidth, imgHeight, x, y int, g string, box *vips.ImageMetadata) (int, int) {
 	boxWidth, boxHeight := 0, 0
-	if boxInfo != nil {
-		boxWidth = boxInfo.Width
-		boxHeight = boxInfo.Height
+	if box != nil {
+		boxWidth = box.Width
+		boxHeight = box.Height
 	}
 
 	switch g {

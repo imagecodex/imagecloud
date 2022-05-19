@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
+	"github.com/songjiayang/imagecloud/internal/image/color"
 	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
+	itext "github.com/songjiayang/imagecloud/internal/image/text"
 )
 
 type Watermark string
@@ -29,7 +31,7 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		text       string
 		fontType   string
 		fontColor  string
-		fontSize   int
+		fontSize   float64
 		fontShadow int
 		fontRotate int
 		fill       int
@@ -64,7 +66,7 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		case "color":
 			fontColor = splits[1]
 		case "size":
-			fontSize, err = strconv.Atoi(splits[1])
+			fontSize, err = strconv.ParseFloat(splits[1], 64)
 		case "shadow":
 			fontShadow, err = strconv.Atoi(splits[1])
 		case "rotate":
@@ -144,29 +146,27 @@ func (*Watermark) label(
 	args *types.CmdArgs,
 	bgInfo *vips.ImageMetadata,
 	text, fontType, fontColor string,
-	fontSize, fontShadow, fontRotate, fill int,
+	fontSize float64, fontShadow, fontRotate, fill int,
 	x, y int, g string, t int) error {
 
+	width, height := itext.CalculateTextBoxSize(text, fontSize)
 	lp := &vips.LabelParams{
-		Text: text,
-		Font: "OPPOSans R",
-		// TODO: caculate width auto
-		Width:     vips.ValueOf(200),
-		Height:    vips.ValueOf(float64(fontSize) * 0.75),
+		Text:      text,
+		Font:      fontType,
+		Width:     vips.ValueOf(width),
+		Height:    vips.ValueOf(height),
 		Alignment: vips.AlignCenter,
 	}
 
 	// set color
 	if fontColor != "" {
-		c, err := Hex2RGB(fontColor)
+		c, err := color.Hex2RGB(fontColor)
 		if err != nil {
 			log.Printf("parse font color with error: %v \n", err)
 			return err
 		}
 		lp.Color = c
 	}
-
-	log.Printf("bg info is %v", bgInfo)
 
 	x, y = getRealOffset(bgInfo.Width, bgInfo.Height, x, y, g, &vips.ImageMetadata{
 		Width:  int(lp.Width.Value),
@@ -182,21 +182,4 @@ func (*Watermark) label(
 	log.Printf("label with %#v \n", lp)
 
 	return args.Img.Label(lp)
-}
-
-func Hex2RGB(hex string) (vips.Color, error) {
-	var rgb vips.Color
-	values, err := strconv.ParseUint(string(hex), 16, 32)
-
-	if err != nil {
-		return vips.Color{}, err
-	}
-
-	rgb = vips.Color{
-		R: uint8(values >> 16),
-		G: uint8((values >> 8) & 0xFF),
-		B: uint8(values & 0xFF),
-	}
-
-	return rgb, nil
 }
