@@ -54,7 +54,7 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	}
 
 	imgHeight, imgWidth := args.Img.PageHeight(), args.Img.Width()
-	if limit == 1 && (h > imgHeight || w > imgWidth) {
+	if limit == 1 && (h > imgHeight && w > imgWidth) {
 		return nil, nil
 	}
 
