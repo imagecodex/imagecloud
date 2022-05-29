@@ -19,7 +19,12 @@ func NewServer(cfg *config.Config) *Server {
 }
 
 func (s *Server) Listen() error {
-	// register routes
+	s.routes()
+
+	return s.Run()
+}
+
+func (s *Server) routes() {
 	s.GET("/*key", func(c *gin.Context) {
 		if c.Param("key") == "/" {
 			s.Pong(c)
@@ -28,7 +33,6 @@ func (s *Server) Listen() error {
 
 		s.Image.Get(c)
 	})
-	s.POST("/", s.Image.Post)
 
-	return s.Run()
+	s.POST("/", s.Image.Post)
 }

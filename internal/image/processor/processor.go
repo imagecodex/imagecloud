@@ -26,6 +26,7 @@ func init() {
 			"format":      new(Format),
 			"info":        new(Info),
 			"auto-orient": new(AutoRotate),
+			"indexcrop":   new(IndexCrop),
 			"quality":     new(Quality),
 			"blur":        new(Blur),
 			"rotate":      new(Rotate),

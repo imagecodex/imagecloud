@@ -116,7 +116,7 @@ func (*Watermark) composite(
 		image = "/" + image
 	}
 
-	imageRef, err := loader.LoadWithUrl(args.ObjectPrefix + image)
+	imageRef, _, err := loader.LoadWithUrl(args.ObjectPrefix + image)
 	if err != nil {
 		return err
 	}

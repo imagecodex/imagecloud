@@ -1,6 +1,7 @@
 package loader
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -8,19 +9,26 @@ import (
 	"github.com/davidbyttow/govips/v2/vips"
 )
 
-func LoadWithUrl(url string) (*vips.ImageRef, error) {
+func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
 	res, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return
 	}
 	defer res.Body.Close()
 
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return loadImage(data)
+	statsCode = res.StatusCode
+	if res.StatusCode/100 != 2 {
+		err = fmt.Errorf("image proxy failed with statuscode=%d", res.StatusCode)
+		return
+	}
+
+	ref, err = loadImage(data)
+	return
 }
 
 func LoadWithReader(reader io.Reader) (*vips.ImageRef, error) {

@@ -28,10 +28,10 @@ func (i *Image) Get(c *gin.Context) {
 	objectUrl := objectPrefix + objectKey
 	log.Printf("get image with url key %s \n", objectUrl)
 
-	imgRef, err := loader.LoadWithUrl(objectUrl)
+	imgRef, code, err := loader.LoadWithUrl(objectUrl)
 	if err != nil {
 		log.Printf("load image ref from url with error: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(code, gin.H{
 			"msg": "load image with url failed",
 		})
 		return
