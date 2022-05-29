@@ -21,7 +21,7 @@ func (*IndexCrop) Process(args *types.CmdArgs) (info *metadata.Info, err error) 
 		splits := strings.Split(param, "_")
 
 		if len(splits) != 2 {
-			return nil, errors.New("invalid blur params")
+			return nil, errors.New("invalid indexcrop params")
 		}
 
 		switch splits[0] {
