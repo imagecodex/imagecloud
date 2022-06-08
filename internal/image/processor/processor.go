@@ -31,6 +31,7 @@ func init() {
 			"quality":         new(Quality),
 			"blur":            new(Blur),
 			"rotate":          new(Rotate),
+			"average-hue":     new(AverageHue),
 		}
 	})
 }

@@ -28,6 +28,10 @@ int average(VipsImage *in, double *out) {
 	return vips_avg(in, out, NULL);
 }
 
+int stats(VipsImage *in, VipsImage **out) {
+  return vips_stats(in, out, NULL);
+}
+
 int find_trim(VipsImage *in, int *left, int *top, int *width, int *height,
               double threshold, double r, double g, double b) {
 

@@ -123,8 +123,10 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 			return
 		}
 
-		// if info processor, return the result
-		if name == "info" {
+		// if info or average-hue processs command
+		// return metadata info directly.
+		switch name {
+		case "info", "average-hue":
 			c.JSON(http.StatusOK, info)
 			return
 		}

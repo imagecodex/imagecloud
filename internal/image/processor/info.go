@@ -12,8 +12,8 @@ func (*Info) Process(args *types.CmdArgs) (*metadata.Info, error) {
 	info := args.Img.Metadata()
 	return &metadata.Info{
 		Format: vips.ImageTypes[info.Format],
-		Height: info.Height,
-		Width:  info.Width,
-		Pages:  info.Pages,
+		Height: &info.Height,
+		Width:  &info.Width,
+		Pages:  &info.Pages,
 	}, nil
 }
