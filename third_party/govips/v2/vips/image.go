@@ -1466,6 +1466,16 @@ func (r *ImageRef) Average() (float64, error) {
 	return out, nil
 }
 
+// Average finds the average value in an image
+func (r *ImageRef) Stats() error {
+	out, err := vipsStats(r.image)
+	if err != nil {
+		return 0, err
+	}
+	r.setImage(out)
+	return nil
+}
+
 // FindTrim returns the bounding box of the non-border part of the image
 // Returned values are left, top, width, height
 func (r *ImageRef) FindTrim(threshold float64, backgroundColor *Color) (int, int, int, int, error) {
