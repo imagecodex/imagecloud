@@ -11,24 +11,23 @@ A image process web server with libvips.
 
 ## Supported image operations
 
-- resize
-- crop
-- watermark
-- quality
-- format
-- info
-- auto-orient
+- [x] resize
+- [x] crop
+- [x] watermark
+- [x] quality
+- [x] format
+- [x] info
+- [x] auto-orient
 - circle
-- indexcrop
-- rounded-corners
+- [x] indexcrop
+- [x] rounded-corners
 - blur
-- rotate
-- interlace
-- average-hue
+- [x] rotate
+- [x] interlace
+- [x] average-hue
 - bright
 - sharpen
 - contrast
-- merge
 
 more details to check [oss image doc](https://help.aliyun.com/document_detail/44688.html)
 
