@@ -26,7 +26,7 @@ A image process web server with libvips.
 - [x] interlace
 - [x] average-hue
 - [x] bright
-- sharpen
+- [x] sharpen
 - contrast
 
 more details to check [oss image doc](https://help.aliyun.com/document_detail/44688.html)

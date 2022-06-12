@@ -33,6 +33,7 @@ func init() {
 			"rotate":          new(Rotate),
 			"average-hue":     new(AverageHue),
 			"bright":          new(Bright),
+			"sharpen":         new(Sharpen),
 		}
 	})
 }

@@ -8,26 +8,25 @@ import (
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
 
-type Bright string
+type Sharpen string
 
-func (*Bright) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
+func (*Sharpen) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	var (
 		value = 0
 	)
 
 	if len(args.Params) != 1 {
-		return nil, errors.New("invalid bright params")
+		return nil, errors.New("invalid sharpen params")
 	}
 
 	if value, err = strconv.Atoi(args.Params[0]); err != nil {
 		return
 	}
 
-	if value > 100 || value < -100 {
-		return nil, errors.New("invalid bright value, should in range [-100, 100]")
+	if value > 399 || value < 50 {
+		return nil, errors.New("invalid sharpen value, should in range [50, 399]")
 	}
 
-	br := 1 + float64(value)/100
-	err = args.Img.Linear1(br, 0)
+	err = args.Img.Sharpen(0.5, 2, float64(value))
 	return nil, err
 }
