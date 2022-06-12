@@ -6,8 +6,7 @@ type CmdArgs struct {
 	Img          *vips.ImageRef
 	Ep           *vips.ExportParams
 	ObjectPrefix string
-
-	Params []string
+	Params       []string
 }
 
 func NewCmdArgs(img *vips.ImageRef, ep *vips.ExportParams, prefix string) *CmdArgs {

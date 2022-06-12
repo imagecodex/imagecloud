@@ -124,7 +124,7 @@ func (*Watermark) composite(
 	if p > 0 {
 		err = imageRef.Resize(float64(p)/100, vips.KernelAuto)
 		if err != nil {
-			log.Printf("auto resize water image with error: %v \n", err)
+			log.Printf("auto resize water image with error: %v", err)
 			return err
 		}
 	}
@@ -137,7 +137,7 @@ func (*Watermark) composite(
 		mod = vips.BlendModeScreen
 	}
 
-	log.Printf("composite with params x=%d, y=%d \n", x, y)
+	log.Printf("composite with params x=%d, y=%d", x, y)
 
 	return args.Img.Composite(imageRef, mod, x, y)
 }
@@ -162,7 +162,7 @@ func (*Watermark) label(
 	if fontColor != "" {
 		c, err := color.Hex2RGB(fontColor)
 		if err != nil {
-			log.Printf("parse font color with error: %v \n", err)
+			log.Printf("parse font color with error: %v", err)
 			return err
 		}
 		lp.Color = c
@@ -179,7 +179,7 @@ func (*Watermark) label(
 		lp.Opacity = float32(t) / 100
 	}
 
-	log.Printf("label with %#v \n", lp)
+	log.Printf("label with %#v", lp)
 
 	return args.Img.Label(lp)
 }

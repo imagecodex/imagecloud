@@ -37,7 +37,7 @@ func (*Rotate) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		return nil, errors.New("roate angle support (0, 90, 180, 270) only")
 	}
 
-	log.Printf("rotate image with angle %d \n", angle)
+	log.Printf("rotate image with angle %d", angle)
 
 	return nil, args.Img.Rotate(angle)
 }

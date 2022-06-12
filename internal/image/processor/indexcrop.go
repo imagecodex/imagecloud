@@ -73,7 +73,7 @@ func (*IndexCrop) Process(args *types.CmdArgs) (info *metadata.Info, err error) 
 		h = imgHeight - top
 	}
 
-	log.Printf("crop with left=%d, top=%d, w=%d, h=%d \n", left, top, w, h)
+	log.Printf("crop with left=%d, top=%d, w=%d, h=%d", left, top, w, h)
 	err = args.Img.Crop(left, top, w, h)
 	return
 }

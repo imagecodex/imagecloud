@@ -23,7 +23,7 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		resizeMode = vips.SizeForce
 	)
 
-	log.Printf("resize process with params %#v \n", args.Params)
+	log.Printf("resize process with params %v", args.Params)
 
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
@@ -81,6 +81,6 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		resizeMode = vips.SizeBoth
 	}
 
-	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d \n", m, w, h, resizeMode)
+	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d", m, w, h, resizeMode)
 	return nil, args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
 }

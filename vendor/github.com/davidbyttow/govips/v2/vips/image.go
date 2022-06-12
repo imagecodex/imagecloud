@@ -1470,7 +1470,7 @@ func (r *ImageRef) Average() (float64, error) {
 func (r *ImageRef) Stats() error {
 	out, err := vipsStats(r.image)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	r.setImage(out)
 	return nil

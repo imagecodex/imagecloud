@@ -40,7 +40,7 @@ func (*RoundedCorner) Process(args *types.CmdArgs) (info *metadata.Info, err err
 		return
 	}
 
-	log.Printf("rounded-corner with r=%d \n", r)
+	log.Printf("rounded-corner with r=%d", r)
 
 	imgWith := args.Img.Width()
 	imgHeight := args.Img.PageHeight()

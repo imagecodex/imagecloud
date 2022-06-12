@@ -26,7 +26,7 @@ func (i *Image) Get(c *gin.Context) {
 
 	objectKey := c.Param("key")
 	objectUrl := objectPrefix + objectKey
-	log.Printf("get image with url key %s \n", objectUrl)
+	log.Printf("get image with url %s", objectUrl)
 
 	imgRef, code, err := loader.LoadWithUrl(objectUrl)
 	if err != nil {
@@ -90,7 +90,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 	}
 
 	if pQuery != "" && !strings.HasPrefix(pQuery, "image/") {
-		log.Printf("invalid process command %s \n", pQuery)
+		log.Printf("invalid process command %s", pQuery)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "invalid process command",
 		})
@@ -116,7 +116,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 		// run cmd
 		info, err := processor.Excute(name, args)
 		if err != nil {
-			log.Printf("image process with cmd %s failed with error: %v\n", cmd, err)
+			log.Printf("image process with cmd %s failed with error: %v", cmd, err)
 			c.JSON(http.StatusBadRequest, gin.H{
 				"msg": "command process failed with error: " + err.Error(),
 			})
@@ -134,7 +134,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 
 	buf, info, err := args.Img.Export(args.Ep)
 	if err != nil {
-		log.Printf("export image with error; %v \n", err)
+		log.Printf("export image with error: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "export image failed",
 		})
