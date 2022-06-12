@@ -34,7 +34,7 @@ func (*Rotate) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	case 270:
 		angle = vips.Angle270
 	default:
-		return nil, errors.New("roate angle support (0, 90, 180, 270) only")
+		return nil, errors.New("rotate angle support (0, 90, 180, 270) only")
 	}
 
 	log.Printf("rotate image with angle %d", angle)
