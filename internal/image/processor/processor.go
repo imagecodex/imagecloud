@@ -34,6 +34,7 @@ func init() {
 			"average-hue":     new(AverageHue),
 			"bright":          new(Bright),
 			"sharpen":         new(Sharpen),
+			"contrast":        new(Contrast),
 		}
 	})
 }

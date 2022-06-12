@@ -27,7 +27,7 @@ func (*Bright) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		return nil, errors.New("invalid bright value, should in range [-100, 100]")
 	}
 
-	br := 1 + float64(value)/100
-	err = args.Img.Linear1(br, 0)
+	rate := 1 + float64(value)/100
+	err = args.Img.Linear1(rate, 0)
 	return nil, err
 }
