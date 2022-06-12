@@ -21,11 +21,11 @@ A image process web server with libvips.
 - circle
 - [x] indexcrop
 - [x] rounded-corners
-- blur
+- [x] blur
 - [x] rotate
 - [x] interlace
 - [x] average-hue
-- bright
+- [x] bright
 - sharpen
 - contrast
 
