@@ -26,6 +26,7 @@ func init() {
 			"format":          new(Format),
 			"info":            new(Info),
 			"auto-orient":     new(AutoRotate),
+			"circle":          new(Circle),
 			"indexcrop":       new(IndexCrop),
 			"rounded-corners": new(RoundedCorner),
 			"quality":         new(Quality),

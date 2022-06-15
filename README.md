@@ -18,7 +18,7 @@ A image process web server with libvips.
 - [x] format
 - [x] info
 - [x] auto-orient
-- circle
+- [x] circle
 - [x] indexcrop
 - [x] rounded-corners
 - [x] blur
