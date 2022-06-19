@@ -11,9 +11,7 @@ import (
 type Bright string
 
 func (*Bright) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
-	var (
-		value int
-	)
+	var value int
 
 	if len(args.Params) != 1 {
 		return nil, errors.New("invalid bright params")
@@ -29,5 +27,6 @@ func (*Bright) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 
 	rate := 1 + float64(value)/100
 	err = args.Img.Linear1(rate, 0)
+
 	return nil, err
 }

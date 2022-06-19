@@ -15,9 +15,7 @@ import (
 type RoundedCorner string
 
 func (*RoundedCorner) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
-	var (
-		r int
-	)
+	var r int
 
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")

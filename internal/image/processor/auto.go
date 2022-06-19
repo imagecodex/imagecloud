@@ -20,18 +20,14 @@ func (*AutoRotate) Process(args *types.CmdArgs) (info *metadata.Info, err error)
 		return nil, err
 	}
 
-	var auto bool
-
 	switch value {
-	case 0:
-		auto = false
-	case 1:
-		auto = true
+	case 0, 1:
 	default:
 		return nil, errors.New("auto orient value support (0, 1) only")
 	}
 
-	if !auto {
+	// ignore if value != 1
+	if value != 1 {
 		return
 	}
 

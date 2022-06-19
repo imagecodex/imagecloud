@@ -11,9 +11,7 @@ import (
 type Sharpen string
 
 func (*Sharpen) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
-	var (
-		value int
-	)
+	var value int
 
 	if len(args.Params) != 1 {
 		return nil, errors.New("invalid sharpen params")

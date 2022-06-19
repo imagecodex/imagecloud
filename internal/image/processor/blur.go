@@ -12,13 +12,10 @@ import (
 type Blur string
 
 func (*Blur) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
-	var (
-		s int
-	)
+	var s int
 
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
-
 		if len(splits) != 2 {
 			return nil, errors.New("invalid blur params")
 		}
@@ -27,6 +24,7 @@ func (*Blur) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		case "s":
 			s, err = strconv.Atoi(splits[1])
 		}
+
 		if err != nil {
 			return
 		}

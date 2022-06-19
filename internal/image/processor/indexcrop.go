@@ -13,9 +13,7 @@ import (
 type IndexCrop string
 
 func (*IndexCrop) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
-	var (
-		x, y, i int
-	)
+	var x, y, i int
 
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
