@@ -2,10 +2,9 @@ package main
 
 import (
 	"flag"
-	"log"
 	"os"
 
-	kitlog "github.com/go-kit/log"
+	"github.com/go-kit/log"
 	"github.com/songjiayang/imagecloud/api/server"
 	"github.com/songjiayang/imagecloud/internal/config"
 )
@@ -20,13 +19,13 @@ func init() {
 }
 
 func main() {
-	logger := kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	log.SetOutput(kitlog.NewStdlibAdapter(logger))
+	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 
 	cfg, err := config.Load(cfgPath)
 	if err != nil {
-		log.Printf("load config with error; %v", err)
+		logger.Log("msg", "load config failed", "error", err)
 	}
 
-	server.NewServer(cfg).Listen()
+	server.NewServer(cfg, logger).Listen()
 }

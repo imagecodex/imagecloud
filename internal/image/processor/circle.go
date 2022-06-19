@@ -67,6 +67,7 @@ func (*Circle) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	if err != nil {
 		return
 	}
+	defer mask.Close()
 
 	if err = mask.ExtractBand(3, 1); err != nil {
 		return

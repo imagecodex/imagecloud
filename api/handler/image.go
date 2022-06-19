@@ -2,12 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/gin-gonic/gin"
+	"github.com/go-kit/log"
 	"github.com/songjiayang/imagecloud/internal/config"
 	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/processor"
@@ -16,6 +16,7 @@ import (
 
 type Image struct {
 	enableSites config.EnableSites
+	logger      log.Logger
 }
 
 func (i *Image) Get(c *gin.Context) {
@@ -26,11 +27,11 @@ func (i *Image) Get(c *gin.Context) {
 
 	objectKey := c.Param("key")
 	objectUrl := objectPrefix + objectKey
-	log.Printf("get image with url %s", objectUrl)
+	i.logger.Log("msg", "get image from url", "url", objectUrl)
 
 	imgRef, code, err := loader.LoadWithUrl(objectUrl)
 	if err != nil {
-		log.Printf("load image ref from url with error: %v", err)
+		i.logger.Log("msg", "load image ref failed", "error", err)
 		c.JSON(code, gin.H{
 			"msg": "load image with url failed",
 		})
@@ -53,7 +54,7 @@ func (i *Image) Post(c *gin.Context) {
 
 	imgRef, err := loader.LoadWithReader(c.Request.Body)
 	if err != nil {
-		log.Printf("load image ref from body with error: %v", err)
+		i.logger.Log("msg", "load image ref from body failed", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "load image from body failed",
 		})
@@ -81,7 +82,7 @@ func (i *Image) resolveObjectPrefix(c *gin.Context) (prefix string, ok bool) {
 	return fmt.Sprintf("%s/%s", enableSite.Endpoint, enableSite.Bucket), true
 }
 
-func (*Image) process(c *gin.Context, args *types.CmdArgs) {
+func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 	defer args.Img.Close()
 
 	pQuery := c.Query("x-oss-process")
@@ -90,7 +91,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 	}
 
 	if pQuery != "" && !strings.HasPrefix(pQuery, "image/") {
-		log.Printf("invalid process command %s", pQuery)
+		i.logger.Log("msg", "invalid process command", "comand", pQuery)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "invalid process command",
 		})
@@ -101,7 +102,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 	pQuery = strings.Replace(pQuery, "image/", "", 1)
 
 	cmds := strings.Split(pQuery, "/")
-	log.Printf("image process with cmds %v", cmds)
+	i.logger.Log("msg", "image process", "cmds", pQuery)
 
 	// add defautl jpg export params
 	ep := vips.NewDefaultJPEGExportParams()
@@ -116,7 +117,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 		// run cmd
 		info, err := processor.Excute(name, args)
 		if err != nil {
-			log.Printf("image process with cmd %s failed with error: %v", cmd, err)
+			i.logger.Log("msg", "image process faield", "cmd", cmd, "error", err)
 			c.JSON(http.StatusBadRequest, gin.H{
 				"msg": "command process failed with error: " + err.Error(),
 			})
@@ -134,7 +135,7 @@ func (*Image) process(c *gin.Context, args *types.CmdArgs) {
 
 	buf, info, err := args.Img.Export(args.Ep)
 	if err != nil {
-		log.Printf("export image with error: %v", err)
+		i.logger.Log("msg", "export image failed", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "export image failed",
 		})

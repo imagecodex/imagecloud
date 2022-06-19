@@ -54,6 +54,8 @@ func (*RoundedCorner) Process(args *types.CmdArgs) (info *metadata.Info, err err
 	if err != nil {
 		return
 	}
+	defer tmp.Close()
+
 	if err = tmp.ExtractBand(3, 1); err != nil {
 		return
 	}
