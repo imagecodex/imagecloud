@@ -7,16 +7,15 @@ import (
 )
 
 func Hex2RGB(hex string) (vips.Color, error) {
-	var rgb vips.Color
-	values, err := strconv.ParseUint(string(hex), 16, 32)
+	bands, err := strconv.ParseUint(string(hex), 16, 32)
 	if err != nil {
 		return vips.Color{}, err
 	}
 
-	rgb = vips.Color{
-		R: uint8(values >> 16),
-		G: uint8((values >> 8) & 0xFF),
-		B: uint8(values & 0xFF),
+	rgb := vips.Color{
+		R: uint8(bands >> 16),
+		G: uint8((bands >> 8) & 0xFF),
+		B: uint8(bands & 0xFF),
 	}
 
 	return rgb, nil
