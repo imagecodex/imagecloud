@@ -9,7 +9,6 @@ import (
 func Hex2RGB(hex string) (vips.Color, error) {
 	var rgb vips.Color
 	values, err := strconv.ParseUint(string(hex), 16, 32)
-
 	if err != nil {
 		return vips.Color{}, err
 	}
