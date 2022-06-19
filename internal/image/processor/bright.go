@@ -12,7 +12,7 @@ type Bright string
 
 func (*Bright) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	var (
-		value = 0
+		value int
 	)
 
 	if len(args.Params) != 1 {

@@ -92,15 +92,16 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 
 	if image != "" {
 		err = w.composite(args, metadata, image, p, x, y, g, t)
-	} else if text != "" {
-		err = w.label(
-			args,
-			metadata,
-			text,
-			fontType, fontColor, fontSize,
-			fontShadow, fontRotate, fill, x, y, g, t,
-		)
+		return
 	}
+
+	err = w.label(
+		args,
+		metadata,
+		text,
+		fontType, fontColor, fontSize,
+		fontShadow, fontRotate, fill, x, y, g, t,
+	)
 
 	return nil, err
 }
