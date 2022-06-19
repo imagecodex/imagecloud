@@ -1,4 +1,7 @@
 # imagecloud
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/songjiayang/imagecloud)](https://goreportcard.com/report/github.com/songjiayang/imagecloud)
+
 A image process web server with libvips.
 
 
