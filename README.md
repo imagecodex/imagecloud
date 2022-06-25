@@ -13,28 +13,6 @@ A image process web server with libvips.
 - support multiple buckets and vendors, like S3、OSS.
 - compatible with OSS image process parameters.
 
-## Supported image operations
-
-- [x] resize
-- [x] crop
-- [x] watermark
-- [x] quality
-- [x] format
-- [x] info
-- [x] auto-orient
-- [x] circle
-- [x] indexcrop
-- [x] rounded-corners
-- [x] blur
-- [x] rotate
-- [x] interlace
-- [x] average-hue
-- [x] bright
-- [x] sharpen
-- [x] contrast
-
-more details to check [oss image doc](https://help.aliyun.com/document_detail/44688.html)
-
 ## Usage
 
 ```
@@ -43,12 +21,46 @@ docker run -itd --name imagecloud -p 8080:8080 songjiayang/imagecloud:v0.1
 
 when docker run successful, send the request to server with `x-amz-process` or `x-oss-process` query.
 
-exemple:
 
 ```
-curl http://localhost:8080/example.jpg?x-oss-process=image/resize,w_100,limit_0 -o example_w100.jpg
+curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100,limit_0 -o example_w100.jpg
 ```
 
+## Supported operations
+
+### resize
+### crop
+### watermark
+### quality
+### format
+### info
+### auto-orient
+### circle
+### indexcrop
+### rounded-corners
+### blur
+
+- params
+
+| name  | require|description|value range|
+| ------------- | ------------- |------------- |------------- |
+| s  |  Y| s (sigma) larger to make the blur more blurry|[1, 50]|
+
+- sample
+```
+x-amz-process=image/blur,s_2
+```
+
+![blur.jpg](/pics/samples/blur_s_2.jpg)
+
+### rotate
+### interlace
+### average-hue
+### bright
+### sharpen
+### contrast
+
+more details to check [oss image doc](https://help.aliyun.com/document_detail/44688.html)
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud?ref=badge_large)
