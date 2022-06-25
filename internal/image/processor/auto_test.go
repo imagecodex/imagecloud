@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
 
 func TestAutoRotate(t *testing.T) {

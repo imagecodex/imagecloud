@@ -2,6 +2,7 @@ package processor
 
 import (
 	"github.com/davidbyttow/govips/v2/vips"
+
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )

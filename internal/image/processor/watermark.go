@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
+
 	"github.com/songjiayang/imagecloud/internal/image/color"
 	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
@@ -121,15 +122,13 @@ func (*Watermark) composite(
 	if err != nil {
 		return err
 	}
+	defer imageRef.Close()
 
 	if p > 0 {
-		err = imageRef.Resize(float64(p)/100, vips.KernelAuto)
-		if err != nil {
-			log.Printf("auto resize water image with error: %v", err)
+		if err = imageRef.Resize(float64(p)/100, vips.KernelAuto); err != nil {
 			return err
 		}
 	}
-	defer imageRef.Close()
 
 	x, y = getRealOffset(bgInfo.Width, bgInfo.Height, x, y, g, imageRef.Metadata())
 
@@ -137,8 +136,6 @@ func (*Watermark) composite(
 	if t < 80 && t > 50 {
 		mod = vips.BlendModeScreen
 	}
-
-	log.Printf("composite with params x=%d, y=%d", x, y)
 
 	return args.Img.Composite(imageRef, mod, x, y)
 }
@@ -179,8 +176,6 @@ func (*Watermark) label(
 	if t > 0 {
 		lp.Opacity = float32(t) / 100
 	}
-
-	log.Printf("label with %#v", lp)
 
 	return args.Img.Label(lp)
 }

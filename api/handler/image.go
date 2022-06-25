@@ -8,6 +8,7 @@ import (
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kit/log"
+
 	"github.com/songjiayang/imagecloud/internal/config"
 	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/processor"
@@ -100,8 +101,6 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 
 	// trim prefix
 	pQuery = strings.Replace(pQuery, "image/", "", 1)
-
-	cmds := strings.Split(pQuery, "/")
 	i.logger.Log("msg", "image process", "cmds", pQuery)
 
 	// add defautl jpg export params
@@ -109,6 +108,7 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 	ep.Format = args.Img.Metadata().Format
 	args.Ep = ep
 
+	cmds := strings.Split(pQuery, "/")
 	for _, cmd := range cmds {
 		splits := strings.Split(cmd, ",")
 		name := splits[0]
