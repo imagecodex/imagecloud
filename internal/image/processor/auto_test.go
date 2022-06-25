@@ -18,6 +18,7 @@ func TestAutoRotate(t *testing.T) {
 	oInfo := ref.Metadata()
 
 	p := new(AutoRotate)
+
 	// if auto-orient disable
 	{
 		p.Process(&types.CmdArgs{
