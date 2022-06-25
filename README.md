@@ -21,10 +21,19 @@ docker run -itd --name imagecloud -p 8080:8080 songjiayang/imagecloud:v0.1
 
 when docker run successful, send the request to server with `x-amz-process` or `x-oss-process` query.
 
+#### example with image resize
 
 ```
 curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100,limit_0 -o example_w100.jpg
 ```
+
+original image:
+
+![original.jpg](/pics/01.jpg)
+
+resized image:
+
+![original.jpg](/pics/samples/resize_w_100.jpg)
 
 ## Supported operations
 
@@ -40,13 +49,14 @@ curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100,limit_0 
 ### rounded-corners
 ### blur
 
-- params
+params:
 
 | name  | require|description|value range|
 | ------------- | ------------- |------------- |------------- |
 | s  |  Y| s (sigma) larger to make the blur more blurry|[1, 50]|
 
-- sample
+example:
+
 ```
 x-amz-process=image/blur,s_2
 ```
