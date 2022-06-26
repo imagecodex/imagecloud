@@ -24,7 +24,7 @@ when docker run successful, send the request to server with `x-amz-process` or `
 #### example with image resize
 
 ```
-curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100,limit_0 -o example_w100.jpg
+curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100 -o example_w100.jpg
 ```
 
 original image:
@@ -33,7 +33,9 @@ original image:
 
 resized image:
 
-![original.jpg](/pics/samples/resize_w_100.jpg)
+![resize_w100.jpg](/pics/samples/resize_w100.jpg)
+
+notice: you can use cmd chains like `image/resize,w_100/format,webp` to resize and format image to webp.
 
 ## Supported operations
 
@@ -61,7 +63,7 @@ example:
 x-amz-process=image/blur,s_2
 ```
 
-![blur.jpg](/pics/samples/blur_s_2.jpg)
+![blur.jpg](/pics/samples/blur_s2.jpg)
 
 ### rotate
 ### interlace
