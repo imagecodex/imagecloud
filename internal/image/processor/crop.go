@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
@@ -43,13 +44,20 @@ func (*Crop) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		}
 	}
 
-	if w == 0 || h == 0 {
-		return nil, errors.New("invalid w, h params")
+	metadata := args.Img.Metadata()
+	imgWidth, imgHeight := metadata.Width, metadata.Height
+
+	if w == 0 {
+		w = imgWidth
+	}
+	if h == 0 {
+		h = imgHeight
 	}
 
-	metadata := args.Img.Metadata()
-	imgHeight, imgWidth := metadata.Height, metadata.Width
-	x, y = getRealOffset(imgWidth, imgHeight, x, y, g, nil)
+	x, y = getRealOffset(imgWidth, imgHeight, x, y, g, &vips.ImageMetadata{
+		Width:  w,
+		Height: h,
+	})
 	x = ensureInRange(0, imgWidth, x)
 	y = ensureInRange(0, imgHeight, y)
 
