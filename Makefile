@@ -1,4 +1,5 @@
 build:
+	go mod vendor
 	docker build -t songjiayang/imagecloud:dev .
 dev:
 	docker run --rm --name imagecloud-dev -d -p 8080:8080 songjiayang/imagecloud:dev  
