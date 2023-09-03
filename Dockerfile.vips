@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.18.3
 
 RUN mkdir /build
 
@@ -31,16 +31,13 @@ RUN apk add --no-cache \
     imagemagick-dev \
     librsvg-dev
 
-ARG CGIF_VERSION=0.2.0
+ARG CGIF_VERSION=0.3.2
 RUN cd /build && \
     curl -fsSLO https://github.com/dloebl/cgif/archive/refs/tags/V${CGIF_VERSION}.tar.gz && \
     tar xf V${CGIF_VERSION}.tar.gz && \
     cd cgif-${CGIF_VERSION} && \
     meson setup --prefix=/usr . build && \
     meson install -C build
-
-# ARG GOLANGCILINT_VERSION=1.44.2
-# RUN curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/bin v${GOLANGCILINT_VERSION}
 
 ARG VIPS_VERSION=8.12.2
 RUN cd /build && \

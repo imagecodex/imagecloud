@@ -1,6 +1,6 @@
 module github.com/songjiayang/imagecloud
 
-go 1.17
+go 1.20
 
 require (
 	github.com/davidbyttow/govips/v2 v2.13.0
