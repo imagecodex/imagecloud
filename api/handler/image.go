@@ -86,21 +86,10 @@ func (i *Image) resolveObjectPrefix(c *gin.Context) (prefix string, ok bool) {
 func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 	defer args.Img.Close()
 
-	pQuery := c.Query("x-oss-process")
-	if pQuery == "" {
-		pQuery = c.Query("x-amz-process")
-	}
-
-	if pQuery != "" && !strings.HasPrefix(pQuery, "image/") {
-		i.logger.Log("msg", "invalid process command", "comand", pQuery)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg": "invalid process command",
-		})
+	pQuery, ok := i.resolveQueryProcess(c)
+	if !ok {
 		return
 	}
-
-	// trim prefix
-	pQuery = strings.Replace(pQuery, "image/", "", 1)
 	i.logger.Log("msg", "image process", "cmds", pQuery)
 
 	// add defautl jpg export params
@@ -117,14 +106,14 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 		// run cmd
 		info, err := processor.Excute(name, args)
 		if err != nil {
-			i.logger.Log("msg", "image process faield", "cmd", cmd, "error", err)
+			i.logger.Log("msg", "image process failed", "cmd", cmd, "error", err)
 			c.JSON(http.StatusBadRequest, gin.H{
 				"msg": "command process failed with error: " + err.Error(),
 			})
 			return
 		}
 
-		// info or average-hue processes command
+		// info or average-hue
 		// return metadata info directly
 		switch name {
 		case "info", "average-hue":
@@ -143,4 +132,22 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 	}
 
 	c.Data(http.StatusOK, "image/"+vips.ImageTypes[info.Format], buf)
+}
+
+func (i *Image) resolveQueryProcess(c *gin.Context) (pQuery string, ok bool) {
+	pQuery = c.Query("x-oss-process")
+	if pQuery == "" {
+		pQuery = c.Query("x-amz-process")
+	}
+
+	if pQuery != "" && !strings.HasPrefix(pQuery, "image/") {
+		i.logger.Log("msg", "invalid process command", "command", pQuery)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "invalid process command",
+		})
+		return pQuery, false
+	}
+
+	pQuery = strings.Replace(pQuery, "image/", "", 1)
+	return pQuery, true
 }
