@@ -6,3 +6,5 @@ dev:
 	open http://localhost:8080/example.jpg?x-amz-process=image/resize,w_800
 stop:
 	docker stop imagecloud-dev
+test: 
+	docker run --rm --name imagecloud-test -v $(CURDIR):/imagecloud -it songjiayang/govips:v0.2.0 sh -c "cd /imagecloud && go test ./..." 
