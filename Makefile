@@ -7,4 +7,5 @@ dev:
 stop:
 	docker stop imagecloud-dev
 test: 
-	docker run --rm --name imagecloud-test -v $(CURDIR):/imagecloud -it songjiayang/govips:v0.2.0 sh -c "cd /imagecloud && go test ./..." 
+	go mod vendor
+	docker run --rm --name imagecloud-test -v $(CURDIR):/imagecloud -i songjiayang/govips:v0.2.0 sh -c "cd /imagecloud && go test ./..." 
