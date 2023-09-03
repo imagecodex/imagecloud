@@ -67,13 +67,13 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 
 	switch m {
 	case "lfit":
-		if h*imgWidth/imgHeight > imgWidth {
+		if h*imgWidth/imgHeight > w {
 			h = w * imgHeight / imgWidth
 		} else {
 			w = h * imgWidth / imgHeight
 		}
 	case "mfit":
-		if h*imgWidth/imgHeight > imgWidth {
+		if h*imgWidth/imgHeight > w {
 			w = h * imgWidth / imgHeight
 		} else {
 			h = w * imgHeight / imgWidth
