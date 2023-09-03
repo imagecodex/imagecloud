@@ -37,5 +37,5 @@ func (s *Server) routes() {
 		s.Image.Get(c)
 	})
 
-	s.POST("/", s.Image.Post)
+	s.POST("/*key", s.Image.Post)
 }
