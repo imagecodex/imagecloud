@@ -14,8 +14,8 @@ func TestResize(t *testing.T) {
 			Image:  "01.jpg",
 			Params: []string{"m_lfit", "w_100", "h_200"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
-				assert.Equal(t, ref.Width(), 299)
-				assert.Equal(t, ref.Height(), 200)
+				assert.Equal(t, ref.Width(), 100)
+				assert.Equal(t, ref.Height(), 66)
 			},
 		},
 		{
@@ -23,8 +23,8 @@ func TestResize(t *testing.T) {
 			Image:  "01.jpg",
 			Params: []string{"m_mfit", "w_100", "h_200"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
-				assert.Equal(t, ref.Width(), 100)
-				assert.Equal(t, ref.Height(), 66)
+				assert.Equal(t, ref.Width(), 299)
+				assert.Equal(t, ref.Height(), 200)
 			},
 		},
 		{
