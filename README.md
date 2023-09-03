@@ -35,44 +35,29 @@ resized image:
 
 ![resize_w100.jpg](/pics/samples/resize_w100.jpg)
 
-notice: you can use cmd chains like `image/resize,w_100/format,webp` to resize and format image to webp.
+Notice: you can use cmd chains like `image/resize,w_100/format,webp` to resize and format image to webp.
 
 ## Supported operations
 
-### resize
-### crop
-### watermark
-### quality
-### format
-### info
-### auto-orient
-### circle
-### indexcrop
-### rounded-corners
-### blur
+The params details please check [Aliyun OSS image preocess doc](https://help.aliyun.com/zh/oss/user-guide/img-parameters).
 
-params:
-
-| name  | require|description|value range|
-| ------------- | ------------- |------------- |------------- |
-| s  |  Y| s (sigma) larger to make the blur more blurry|[1, 50]|
-
-example:
-
-```
-x-amz-process=image/blur,s_2
-```
-
-![blur.jpg](/pics/samples/blur_s2.jpg)
-
-### rotate
-### interlace
-### average-hue
-### bright
-### sharpen
-### contrast
-
-more details to check [oss image doc](https://help.aliyun.com/document_detail/44688.html)
+- [x] resize
+- [x] crop
+- [x] watermark
+- [x] quality
+- [x] format
+- [x] info
+- [x] auto-orient
+- [x] circle
+- [x] indexcrop
+- [x] rounded-corners
+- [x] blur
+- [x] rotate
+- [x] interlace
+- [x] average-hue
+- [x] bright
+- [x] sharpen
+- [x] contrast
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud?ref=badge_large)
