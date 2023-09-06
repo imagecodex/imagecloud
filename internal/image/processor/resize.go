@@ -8,13 +8,14 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 
+	"github.com/songjiayang/imagecloud/internal/image/color"
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
 
 type Resize string
 
-func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
+func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	var (
 		m     = "lfit"
 		w, h  int
@@ -22,6 +23,9 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 
 		// default size
 		resizeMode = vips.SizeForce
+
+		// pad params
+		padColor interface{}
 	)
 
 	log.Printf("resize process with params %v", args.Params)
@@ -42,6 +46,8 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 			h, err = strconv.Atoi(splits[1])
 		case "limit":
 			limit, err = strconv.Atoi(splits[1])
+		case "color":
+			padColor, err = r.resolveVipsColor(splits[1])
 		}
 
 		if err != nil {
@@ -50,7 +56,7 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	}
 
 	// do noting
-	if w == 0 && h == 0 {
+	if w <= 0 && h <= 0 {
 		return
 	}
 
@@ -59,29 +65,66 @@ func (*Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		return nil, nil
 	}
 
-	if w == 0 {
+	if w <= 0 {
 		w = h * imgWidth / imgHeight
-	} else if h == 0 {
+	} else if h <= 0 {
 		h = w * imgHeight / imgWidth
 	}
 
+	iw, ih := w, h
+
 	switch m {
-	case "lfit":
-		if h*imgWidth/imgHeight > w {
+	case "lfit", "pad":
+		if h*imgWidth/imgHeight >= w {
 			h = w * imgHeight / imgWidth
 		} else {
 			w = h * imgWidth / imgHeight
 		}
 	case "mfit":
-		if h*imgWidth/imgHeight > w {
+		if h*imgWidth/imgHeight >= w {
 			w = h * imgWidth / imgHeight
 		} else {
 			h = w * imgHeight / imgWidth
 		}
-	case "fill", "pad":
+	case "fill":
 		resizeMode = vips.SizeBoth
 	}
 
 	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d", m, w, h, resizeMode)
-	return nil, args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
+	err = args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
+
+	// nothing need to change
+	if iw == w && ih == h {
+		return
+	}
+
+	if m == "pad" {
+		err = r.pad(args, padColor, iw, ih, w, h)
+	}
+	return
+}
+
+func (*Resize) resolveVipsColor(hexColor string) (interface{}, error) {
+	switch len(hexColor) {
+	case 6:
+		return color.Hex2RGB(hexColor)
+	case 8:
+		return color.Hex2RGBA(hexColor)
+	default:
+		return vips.Color{255, 255, 255}, nil
+	}
+}
+
+func (r *Resize) pad(args *types.CmdArgs, padColor interface{}, iw, ih, w, h int) (err error) {
+	left := (iw - w) / 2
+	top := (ih - h) / 2
+
+	switch v := padColor.(type) {
+	case vips.Color:
+		err = args.Img.EmbedBackground(left, top, iw, ih, &v)
+	case vips.ColorRGBA:
+		err = args.Img.EmbedBackgroundRGBA(left, top, iw, ih, &v)
+	}
+
+	return err
 }
