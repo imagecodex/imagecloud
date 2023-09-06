@@ -37,7 +37,16 @@ func TestResize(t *testing.T) {
 			},
 		},
 		{
-			Name:   "resize with pad",
+			Name:   "resize with pad and default color",
+			Image:  "01.jpg",
+			Params: []string{"m_pad", "w_100", "h_200"},
+			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
+				assert.Equal(t, ref.Width(), 100)
+				assert.Equal(t, ref.Height(), 200)
+			},
+		},
+		{
+			Name:   "resize with pad and color option",
 			Image:  "01.jpg",
 			Params: []string{"m_pad", "w_100", "h_200", "color_ff00ff"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
@@ -59,7 +68,8 @@ func TestResize(t *testing.T) {
 			Image:  "01.jpg",
 			Params: []string{"m_fixed", "w_800", "h_500", "limit_1"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
-				assert.False(t, ref.Width() == 800 || ref.Height() == 500)
+				assert.Equal(t, ref.Width(), 400)
+				assert.Equal(t, ref.Height(), 267)
 			},
 		},
 		{
@@ -67,7 +77,17 @@ func TestResize(t *testing.T) {
 			Image:  "01.jpg",
 			Params: []string{"m_fixed", "w_800", "h_500", "limit_0"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
-				assert.True(t, ref.Width() == 800 || ref.Height() == 500)
+				assert.Equal(t, ref.Width(), 800)
+				assert.Equal(t, ref.Height(), 500)
+			},
+		},
+		{
+			Name:   "resize with 50 percentage",
+			Image:  "01.jpg",
+			Params: []string{"p_50"},
+			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
+				assert.Equal(t, ref.Width(), 200)
+				assert.Equal(t, ref.Height(), 133)
 			},
 		},
 	}

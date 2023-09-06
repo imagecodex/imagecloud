@@ -25,7 +25,9 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		resizeMode = vips.SizeForce
 
 		// pad params
-		padColor interface{}
+		padColor interface{} = vips.ColorWhite
+
+		p int // resize with percentage
 	)
 
 	log.Printf("resize process with params %v", args.Params)
@@ -48,6 +50,8 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 			limit, err = strconv.Atoi(splits[1])
 		case "color":
 			padColor, err = r.resolveVipsColor(splits[1])
+		case "p":
+			p, err = strconv.Atoi(splits[1])
 		}
 
 		if err != nil {
@@ -55,12 +59,17 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		}
 	}
 
+	// resize by percent
+	if p > 0 && p <= 200 {
+		return nil, r.byPercent(args, p)
+	}
+
 	// do noting
 	if w <= 0 && h <= 0 {
 		return
 	}
 
-	imgHeight, imgWidth := args.Img.PageHeight(), args.Img.Width()
+	imgWidth, imgHeight := args.Img.Width(), args.Img.PageHeight()
 	if limit == 1 && (h > imgHeight && w > imgWidth) {
 		return nil, nil
 	}
@@ -72,7 +81,6 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	}
 
 	iw, ih := w, h
-
 	switch m {
 	case "lfit", "pad":
 		if h*imgWidth/imgHeight >= w {
@@ -97,14 +105,10 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		return nil, err
 	}
 
-	// nothing need to change
-	if iw == w && ih == h {
-		return
-	}
-
-	if m == "pad" {
+	if m == "pad" && (iw != w || ih != h) {
 		err = r.pad(args, padColor, iw, ih, w, h)
 	}
+
 	return
 }
 
@@ -115,15 +119,11 @@ func (*Resize) resolveVipsColor(hexColor string) (interface{}, error) {
 	case 8:
 		return color.Hex2RGBA(hexColor)
 	default:
-		return vips.Color{255, 255, 255}, nil
+		return vips.ColorWhite, nil
 	}
 }
 
 func (r *Resize) pad(args *types.CmdArgs, padColor interface{}, iw, ih, w, h int) (err error) {
-	if padColor == nil {
-		padColor = vips.Color{255, 255, 255}
-	}
-
 	left := (iw - w) / 2
 	top := (ih - h) / 2
 
@@ -134,5 +134,12 @@ func (r *Resize) pad(args *types.CmdArgs, padColor interface{}, iw, ih, w, h int
 		err = args.Img.EmbedBackgroundRGBA(left, top, iw, ih, &v)
 	}
 
-	return err
+	return
+}
+
+func (r *Resize) byPercent(args *types.CmdArgs, p int) error {
+	imgWidth, imgHeight := args.Img.Width(), args.Img.PageHeight()
+	w := imgWidth * p / 100
+	h := imgHeight * p / 100
+	return args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, vips.SizeForce)
 }
