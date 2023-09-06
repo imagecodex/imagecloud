@@ -3,43 +3,43 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/songjiayang/imagecloud)](https://goreportcard.com/report/github.com/songjiayang/imagecloud)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud?ref=badge_shield)
 
-A image process web server with libvips.
+imagecloud 是一个基于libivps的高效图像处理服务器。
 
-[中文文档](/README_CN.md)。
+## 特性
 
-## Features
+- 基于libvips构建，高效省内存。
+- 丰富的图像处理函数，满足各种需求。
+- 后端存储无绑定，支持各种S3协议的对象存储。
+- 兼容阿里云的图像转码参数。
+- 支持 `/rawdata` POST 接口，测试更方便。
 
-- efficient and memory safe with libvips.
-- rich image operations fit all your requirements.
-- support multiple buckets and vendors, like S3、OSS.
-- compatible with OSS image process parameters.
-- POST image process with `/rawdata` api.
+## 使用方式
 
-## Usage
+可以直接使用 Docker 运行本服务。
 
 ```
 docker run -itd --name imagecloud -p 8080:8080 songjiayang/imagecloud:v0.1
 ```
 
-when docker run successful, send the request to server with `x-amz-process` or `x-oss-process` query params.
+当容器运行成功后，您可以通过请求携带 `x-amz-process` 或者 `x-oss-process` 参数发起访问请求。
 
-`process` params support command chains, for example `image/resize,w_100/format,webp` means resize and format image to webp.
+`process` 参数支持链式调用，比如 `image/resize,w_100/format,webp` 既实现缩放又实现格式转化。
 
-#### image process with GET method
+#### 使用 GET 请求处理图片
 
 ```
 curl http://localhost:8080/example.jpg?x-amz-process=image/resize,w_100 -o example_w100.jpg
 ```
 
-original image:
+原图:
 
 ![original.jpg](/pics/01.jpg)
 
-resized image:
+缩放后图片:
 
 ![resize_w100.jpg](/pics/samples/resize_w100.jpg)
 
-#### image process with POST method
+#### 使用 POST 请求处理图片
 
 ```
 curl -X POST --data-binary "@./pics/01.jpg" 'http://localhost:8080/rawdata?x-amz-process=image/info'
@@ -49,9 +49,9 @@ curl -X POST --data-binary "@./pics/01.jpg" 'http://localhost:8080/rawdata?x-amz
 {"format":"jpeg","width":400,"height":267,"pages":1}
 ```
 
-## Supported operations
+## 已支持的图像处理函数
 
-The params details please check [Aliyun OSS image preocess doc](https://help.aliyun.com/zh/oss/user-guide/img-parameters).
+函数对应的参数，请参考[阿里云图像处理文档](https://help.aliyun.com/zh/oss/user-guide/img-parameters)。
 
 - [x] resize
 - [x] crop
