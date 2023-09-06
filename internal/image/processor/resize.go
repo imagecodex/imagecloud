@@ -91,7 +91,11 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	}
 
 	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d", m, w, h, resizeMode)
-	err = args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode)
+
+	// resize first
+	if err = args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode); err != nil {
+		return nil, err
+	}
 
 	// nothing need to change
 	if iw == w && ih == h {
@@ -116,6 +120,10 @@ func (*Resize) resolveVipsColor(hexColor string) (interface{}, error) {
 }
 
 func (r *Resize) pad(args *types.CmdArgs, padColor interface{}, iw, ih, w, h int) (err error) {
+	if padColor == nil {
+		padColor = vips.Color{255, 255, 255}
+	}
+
 	left := (iw - w) / 2
 	top := (ih - h) / 2
 

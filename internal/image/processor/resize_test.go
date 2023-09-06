@@ -39,7 +39,7 @@ func TestResize(t *testing.T) {
 		{
 			Name:   "resize with pad",
 			Image:  "01.jpg",
-			Params: []string{"m_pad", "w_100", "h_200"},
+			Params: []string{"m_pad", "w_100", "h_200", "color_ff00ff"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
 				assert.Equal(t, ref.Width(), 100)
 				assert.Equal(t, ref.Height(), 200)
