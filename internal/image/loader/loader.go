@@ -3,7 +3,6 @@ package loader
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/davidbyttow/govips/v2/vips"
@@ -16,7 +15,7 @@ func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
 	}
 	defer res.Body.Close()
 
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return
 	}
@@ -32,7 +31,7 @@ func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
 }
 
 func LoadWithReader(reader io.Reader) (*vips.ImageRef, error) {
-	buf, err := ioutil.ReadAll(reader)
+	buf, err := io.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}

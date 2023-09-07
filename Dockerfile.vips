@@ -29,22 +29,26 @@ RUN apk add --no-cache \
     tiff-dev \
     imagemagick \
     imagemagick-dev \
-    librsvg-dev
+    librsvg-dev \
+    libjxl-dev \
+    cgif-dev \
+    tiff-dev \
+    aom
 
-ARG CGIF_VERSION=0.3.2
-RUN cd /build && \
-    curl -fsSLO https://github.com/dloebl/cgif/archive/refs/tags/V${CGIF_VERSION}.tar.gz && \
-    tar xf V${CGIF_VERSION}.tar.gz && \
-    cd cgif-${CGIF_VERSION} && \
-    meson setup --prefix=/usr . build && \
-    meson install -C build
+# ARG CGIF_VERSION=0.3.2
+# RUN cd /build && \
+#     curl -fsSLO https://github.com/dloebl/cgif/archive/refs/tags/V${CGIF_VERSION}.tar.gz && \
+#     tar xf V${CGIF_VERSION}.tar.gz && \
+#     cd cgif-${CGIF_VERSION} && \
+#     meson setup --prefix=/usr . build && \
+#     meson install -C build
 
-ARG VIPS_VERSION=8.12.2
+ARG VIPS_VERSION=8.14.4
 RUN cd /build && \
-    curl -fsSLO https://github.com/libvips/libvips/releases/download/v${VIPS_VERSION}/vips-${VIPS_VERSION}.tar.gz && \
-    tar xf vips-${VIPS_VERSION}.tar.gz && \
-    cd vips-${VIPS_VERSION} && \
-    ./configure --enable-debug=no --prefix=/usr --disable-static --enable-introspection && \
-    make -j 8 install
+    curl -fsSLO https://github.com/libvips/libvips/archive/refs/tags/v${VIPS_VERSION}.tar.gz && \
+    tar xf v${VIPS_VERSION}.tar.gz && \
+    cd libvips-${VIPS_VERSION} && \
+    meson setup build --prefix=/usr && \ 
+    cd build && meson compile && meson install
 
 RUN cd / && rm -rf /build

@@ -28,6 +28,10 @@ func (*Format) Process(args *types.CmdArgs) (*metadata.Info, error) {
 		format = vips.ImageTypePNG
 	case "gif":
 		format = vips.ImageTypeGIF
+	case "avif":
+		format = vips.ImageTypeAVIF
+	case "heif", "heic":
+		format = vips.ImageTypeHEIF
 	default:
 		return nil, fmt.Errorf("%s image type not support", args.Params[0])
 	}
