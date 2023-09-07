@@ -131,7 +131,7 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 		return
 	}
 
-	c.Data(http.StatusOK, "image/"+vips.ImageTypes[info.Format], buf)
+	c.Data(http.StatusOK, "image/"+i.resolveImageType(info.Format), buf)
 }
 
 func (i *Image) resolveQueryProcess(c *gin.Context) (pQuery string, ok bool) {
@@ -150,4 +150,13 @@ func (i *Image) resolveQueryProcess(c *gin.Context) (pQuery string, ok bool) {
 
 	pQuery = strings.Replace(pQuery, "image/", "", 1)
 	return pQuery, true
+}
+
+func (i *Image) resolveImageType(f vips.ImageType) string {
+	switch f {
+	case vips.ImageTypeAVIF:
+		return "avif"
+	default:
+		return vips.ImageTypes[f]
+	}
 }

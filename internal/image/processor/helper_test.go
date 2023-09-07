@@ -1,7 +1,7 @@
 package processor
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
@@ -20,15 +20,16 @@ func loadImage(pic string) (*vips.ImageRef, error) {
 }
 
 func getImageData(pic string) ([]byte, error) {
-	return ioutil.ReadFile("../../../pics/" + pic)
+	return os.ReadFile("../../../pics/" + pic)
 }
 
 type TestCase struct {
-	Name      string
-	Image     string
-	Params    []string
-	ExpectErr string
-	CheckFunc func(*vips.ImageRef, *testing.T)
+	Name        string
+	Image       string
+	Params      []string
+	ExpectErr   string
+	ExportCheck bool
+	CheckFunc   func(*vips.ImageRef, *testing.T)
 }
 
 func runTableTest(cases []TestCase, t *testing.T, p Processor) {
@@ -38,10 +39,17 @@ func runTableTest(cases []TestCase, t *testing.T, p Processor) {
 			assert.Nil(t, err)
 			defer ref.Close()
 
-			_, err = p.Process(&types.CmdArgs{
-				Img:    ref,
+			args := &types.CmdArgs{
+				Img: ref,
+				Ep: &vips.ExportParams{
+					Format:  ref.Format(),
+					Quality: 75,
+					Speed:   9,
+				},
 				Params: tc.Params,
-			})
+			}
+
+			_, err = p.Process(args)
 
 			// check error
 			if tc.ExpectErr == "" {
@@ -51,6 +59,20 @@ func runTableTest(cases []TestCase, t *testing.T, p Processor) {
 			}
 
 			if tc.CheckFunc != nil {
+				// reload ref
+				if tc.ExportCheck {
+					if data, _, err := ref.Export(args.Ep); err != nil {
+						t.Error(err)
+
+					} else {
+						ref.Close()
+
+						if ref, err = vips.NewImageFromBuffer(data); err != nil {
+							t.Error(err)
+						}
+					}
+				}
+
 				tc.CheckFunc(ref, t)
 			}
 		})
