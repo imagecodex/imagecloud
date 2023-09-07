@@ -82,6 +82,15 @@ func TestFormat(t *testing.T) {
 			},
 		},
 		{
+			Name:        "format to jxl",
+			Image:       "01.jpg",
+			Params:      []string{"jxl"},
+			ExportCheck: true,
+			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
+				assert.Equal(t, ref.Format(), vips.ImageTypeJXL)
+			},
+		},
+		{
 			Name:      "format to invalid type",
 			Image:     "01.jpg",
 			Params:    []string{"invalid-type"},
