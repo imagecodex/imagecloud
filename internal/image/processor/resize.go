@@ -20,10 +20,6 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		m     = "lfit"
 		w, h  int
 		limit = 1
-
-		// default size
-		resizeMode = vips.SizeForce
-
 		// pad params
 		padColor interface{} = vips.ColorWhite
 
@@ -61,7 +57,7 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 
 	// resize by percent
 	if p > 0 && p <= 200 {
-		return nil, r.byPercent(args, p)
+		return nil, args.Img.Resize(float64(p)/100, vips.KernelAuto)
 	}
 
 	// do noting
@@ -70,14 +66,16 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	}
 
 	imgWidth, imgHeight := args.Img.Width(), args.Img.PageHeight()
-	if limit == 1 && (h > imgHeight && w > imgWidth) {
-		return nil, nil
-	}
-
 	if w <= 0 {
 		w = h * imgWidth / imgHeight
 	} else if h <= 0 {
 		h = w * imgHeight / imgWidth
+	}
+
+	// limit check
+	if limit == 1 && (h > imgHeight && w > imgWidth) {
+		log.Println("ignore resize with limit=1")
+		return nil, nil
 	}
 
 	iw, ih := w, h
@@ -88,25 +86,31 @@ func (r *Resize) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		} else {
 			w = h * imgWidth / imgHeight
 		}
-	case "mfit":
+	case "mfit", "fill":
 		if h*imgWidth/imgHeight >= w {
 			w = h * imgWidth / imgHeight
 		} else {
 			h = w * imgHeight / imgWidth
 		}
-	case "fill":
-		resizeMode = vips.SizeBoth
 	}
 
-	log.Printf("resize with m=%s, w=%d, h=%d, resizeMode=%d", m, w, h, resizeMode)
+	log.Printf("resize with m=%s, w=%d, h=%d, ow=%d, oh=%d", m, w, h, imgWidth, imgHeight)
 
 	// resize first
-	if err = args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, resizeMode); err != nil {
+	if err = args.Img.ResizeWithVScale(float64(w)/float64(imgWidth), float64(h)/float64(imgHeight), vips.KernelAuto); err != nil {
 		return nil, err
 	}
 
-	if m == "pad" && (iw != w || ih != h) {
+	// nothing to do if is expect output image
+	if iw == w && ih == h {
+		return
+	}
+
+	switch m {
+	case "pad":
 		err = r.pad(args, padColor, iw, ih, w, h)
+	case "fill":
+		err = args.Img.Crop((w-iw)/2, (h-ih)/2, iw, ih)
 	}
 
 	return
@@ -135,11 +139,4 @@ func (r *Resize) pad(args *types.CmdArgs, padColor interface{}, iw, ih, w, h int
 	}
 
 	return
-}
-
-func (r *Resize) byPercent(args *types.CmdArgs, p int) error {
-	imgWidth, imgHeight := args.Img.Width(), args.Img.PageHeight()
-	w := imgWidth * p / 100
-	h := imgHeight * p / 100
-	return args.Img.ThumbnailWithSize(w, h, vips.InterestingCentre, vips.SizeForce)
 }
