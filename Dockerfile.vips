@@ -31,9 +31,12 @@ RUN apk add --no-cache \
     imagemagick-dev \
     librsvg-dev \
     libjxl-dev \
+    libjxl \
+    libjxl-tools \
     cgif-dev \
     tiff-dev \
-    aom
+    aom \
+    exiftool 
 
 # ARG CGIF_VERSION=0.3.2
 # RUN cd /build && \
