@@ -40,6 +40,6 @@ func LoadWithReader(reader io.Reader) (*vips.ImageRef, error) {
 
 func loadImage(buf []byte) (*vips.ImageRef, error) {
 	p := vips.NewImportParams()
-	p.Page.Set(-1)
+	p.NumPages.Set(-1)
 	return vips.LoadImageFromBuffer(buf, p)
 }

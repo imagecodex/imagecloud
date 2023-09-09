@@ -1,12 +1,14 @@
 package processor
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
 
@@ -16,7 +18,7 @@ func loadImage(pic string) (*vips.ImageRef, error) {
 		return nil, err
 	}
 
-	return vips.NewImageFromBuffer(data)
+	return loader.LoadWithReader(bytes.NewBuffer(data))
 }
 
 func getImageData(pic string) ([]byte, error) {
