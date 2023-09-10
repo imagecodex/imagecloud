@@ -11,9 +11,10 @@ type Info string
 
 func (*Info) Process(args *types.CmdArgs) (*metadata.Info, error) {
 	info := args.Img.Metadata()
+	pageHeight := args.Img.GetPageHeight()
 	return &metadata.Info{
 		Format: vips.ImageTypes[info.Format],
-		Height: &info.Height,
+		Height: &pageHeight,
 		Width:  &info.Width,
 		Pages:  &info.Pages,
 	}, nil

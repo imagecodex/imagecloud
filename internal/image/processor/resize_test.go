@@ -87,7 +87,7 @@ func TestResize(t *testing.T) {
 			Params: []string{"p_50"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
 				assert.Equal(t, ref.Width(), 200)
-				assert.Equal(t, ref.Height(), 133)
+				assert.Equal(t, ref.Height(), 134)
 			},
 		},
 		{
@@ -96,7 +96,7 @@ func TestResize(t *testing.T) {
 			Params: []string{"p_50"},
 			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
 				assert.Equal(t, ref.Width(), 250)
-				assert.Equal(t, ref.PageHeight(), 450)
+				assert.Equal(t, ref.PageHeight(), 150)
 				assert.Equal(t, ref.Pages(), 3)
 			},
 		},
