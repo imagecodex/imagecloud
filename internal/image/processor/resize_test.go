@@ -100,6 +100,16 @@ func TestResize(t *testing.T) {
 				assert.Equal(t, ref.Pages(), 3)
 			},
 		},
+		{
+			Name:   "resize gif with fill mode",
+			Image:  "01.gif",
+			Params: []string{"w_200", "h_200", "m_fill"},
+			CheckFunc: func(ref *vips.ImageRef, t *testing.T) {
+				assert.Equal(t, ref.Width(), 200)
+				assert.Equal(t, ref.PageHeight(), 200)
+				assert.Equal(t, ref.Pages(), 3)
+			},
+		},
 	}
 
 	runTableTest(cases, t, new(Resize))
