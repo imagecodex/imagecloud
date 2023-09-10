@@ -65,7 +65,6 @@ func runTableTest(cases []TestCase, t *testing.T, p Processor) {
 				if tc.ExportCheck {
 					if data, _, err := ref.Export(args.Ep); err != nil {
 						t.Error(err)
-
 					} else {
 						ref.Close()
 
