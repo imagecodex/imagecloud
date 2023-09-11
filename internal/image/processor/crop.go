@@ -44,8 +44,7 @@ func (*Crop) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		}
 	}
 
-	metadata := args.Img.Metadata()
-	imgWidth, imgHeight := metadata.Width, metadata.Height
+	imgWidth, imgHeight := args.Img.Width(), args.Img.PageHeight()
 
 	if w == 0 {
 		w = imgWidth

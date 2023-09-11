@@ -32,7 +32,7 @@ func getRealOffset(imgWidth, imgHeight, x, y int, g string, box *vips.ImageMetad
 	case "ne":
 		x = imgWidth - x - boxWidth
 	case "west":
-		y = imgHeight/2 + y
+		y = imgHeight/2 - boxHeight/2 + y
 	case "center":
 		y = imgHeight/2 + y - boxHeight/2
 		x = imgWidth/2 + x - boxWidth/2
