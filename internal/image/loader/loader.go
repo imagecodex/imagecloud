@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/davidbyttow/govips/v2/vips"
+	"github.com/songjiayang/imagecloud/internal/metrics"
 )
 
 func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
+	start := time.Now()
+
 	res, err := http.Get(url)
 	if err != nil {
 		return
@@ -27,6 +31,9 @@ func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
 	}
 
 	ref, err = loadImage(data)
+
+	// add remote image load metrics
+	metrics.ImageRemoteLoadDuration.Observe(time.Since(start).Seconds())
 	return
 }
 
