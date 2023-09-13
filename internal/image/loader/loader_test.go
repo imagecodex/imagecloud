@@ -14,7 +14,8 @@ func TestLoadWithUrl(t *testing.T) {
 	{
 		imageUrl := "http://image-demo.oss-cn-hangzhou.aliyuncs.com/example.jpg"
 		ref, statusCode, err := LoadWithUrl(imageUrl)
-		defer ref.Close()
+		// nolint: staticcheck
+		ref.Close()
 		assertion.Nil(err)
 		assertion.Equal(200, statusCode)
 		assertion.NotNil(ref)

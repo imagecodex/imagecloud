@@ -11,3 +11,6 @@ stop:
 test: 
 	go mod vendor
 	docker run --rm --name imagecloud-test -v $(CURDIR):/imagecloud -i songjiayang/govips:v0.3.0 sh -c "cd /imagecloud && go test ./..." 
+lint:
+	go mod vendor
+	docker run --rm --name imagecloud-test -v $(CURDIR):/imagecloud -i songjiayang/govips:v0.3.0 sh -c "cd /imagecloud && golangci-lint run ./..." 

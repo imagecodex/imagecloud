@@ -16,6 +16,7 @@ func (*Quality) Process(args *types.CmdArgs) (*metadata.Info, error) {
 		return nil, errors.New("invalid quality params")
 	}
 
+LOOP:
 	for _, param := range args.Params {
 		splits := strings.Split(param, "_")
 
@@ -31,7 +32,7 @@ func (*Quality) Process(args *types.CmdArgs) (*metadata.Info, error) {
 			}
 
 			args.Ep.Quality = int(quality)
-			break
+			break LOOP
 		}
 	}
 

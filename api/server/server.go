@@ -13,7 +13,6 @@ import (
 type Server struct {
 	*gin.Engine
 	*handler.Handler
-	logger log.Logger
 }
 
 func NewServer(cfg *config.Config, logger log.Logger) *Server {

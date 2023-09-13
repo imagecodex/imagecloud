@@ -38,6 +38,12 @@ RUN apk add --no-cache \
     aom \
     exiftool 
 
+ARG GOLANGCI_VERSION=1.54.2
+RUN cd /build && \
+    curl -fsSLO https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-amd64.tar.gz && \
+    tar xf golangci-lint-${GOLANGCI_VERSION}-linux-amd64.tar.gz && \
+    mv golangci-lint-${GOLANGCI_VERSION}-linux-amd64/golangci-lint /usr/bin/
+
 # ARG CGIF_VERSION=0.3.2
 # RUN cd /build && \
 #     curl -fsSLO https://github.com/dloebl/cgif/archive/refs/tags/V${CGIF_VERSION}.tar.gz && \

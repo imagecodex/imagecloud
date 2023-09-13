@@ -26,7 +26,10 @@ func main() {
 	cfg, err := config.Load(cfgPath)
 	if err != nil {
 		logger.Log("msg", "load config failed", "error", err)
+		return
 	}
 
-	server.NewServer(cfg, logger).Listen()
+	if err := server.NewServer(cfg, logger).Listen(); err != nil {
+		logger.Log("msg", "server start failed", "error", err)
+	}
 }
