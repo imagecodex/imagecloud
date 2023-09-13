@@ -9,7 +9,6 @@ import (
 type Handler struct {
 	*Image
 	*Ponger
-	logger log.Logger
 }
 
 func NewHandler(cfg *config.Config, logger log.Logger) *Handler {
