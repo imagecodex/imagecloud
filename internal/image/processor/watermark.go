@@ -2,17 +2,16 @@ package processor
 
 import (
 	"errors"
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/davidbyttow/govips/v2/vips"
 
-	"github.com/songjiayang/imagecloud/internal/image/color"
 	"github.com/songjiayang/imagecloud/internal/image/loader"
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
-	itext "github.com/songjiayang/imagecloud/internal/image/text"
+	"github.com/songjiayang/imagecloud/internal/image/text"
 )
 
 type Watermark string
@@ -30,12 +29,12 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		percent int
 
 		// text water params
-		text       string
-		fontType   string
-		fontColor  string
-		fontSize   float64
-		fontShadow int
-		fontRotate int
+		text        string
+		fontFamily  string = "OPPOSans-M"
+		fontColor   string = "000000"
+		fontSize    int    = 40
+		fontOpacity int    = 100
+		fontRotate  int
 	)
 
 	for _, param := range args.Params {
@@ -63,13 +62,13 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		case "text":
 			text, err = base64UrlDecodeString(splits[1])
 		case "type":
-			fontType, err = base64UrlDecodeString(splits[1])
+			fontFamily, err = base64UrlDecodeString(splits[1])
 		case "color":
 			fontColor = splits[1]
 		case "size":
-			fontSize, err = strconv.ParseFloat(splits[1], 64)
+			fontSize, err = strconv.Atoi(splits[1])
 		case "shadow":
-			fontShadow, err = strconv.Atoi(splits[1])
+			fontOpacity, err = strconv.Atoi(splits[1])
 		case "rotate":
 			fontRotate, err = strconv.Atoi(splits[1])
 		case "fill":
@@ -98,45 +97,30 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 	x = ensureInRange(0, imgInfo.Width, x)
 	y = ensureInRange(0, imgInfo.Height, y)
 
+	var overlayRef *vips.ImageRef
 	if image != "" {
-		err = w.composite(args, imgInfo, image, percent, x, y, g, opacity, fill, padx, pady)
+		overlayRef, err = w.loadImageRef(args, image, percent)
+	} else {
+		overlayRef, err = w.genTextRef(text, fontSize, fontFamily, fontColor, fontOpacity, fontRotate)
+	}
+	if err != nil {
 		return
 	}
+	defer overlayRef.Close()
 
-	err = w.label(
-		args,
-		imgInfo,
-		text,
-		fontType, fontColor, fontSize,
-		fontShadow, fontRotate, fill, x, y, g, opacity,
+	return nil, w.composite(args, imgInfo,
+		overlayRef, opacity,
+		x, y, g,
+		fill, padx, pady,
 	)
-
-	return nil, err
 }
 
 func (w *Watermark) composite(
 	args *types.CmdArgs,
 	bgInfo *vips.ImageMetadata,
-	image string, percent int,
+	overlayRef *vips.ImageRef, opacity int,
 	x, y int, g string,
-	opacity int,
-	fill, padx, pady int) error {
-
-	if !strings.HasPrefix(image, "/") {
-		image = "/" + image
-	}
-
-	overlayRef, _, err := loader.LoadWithUrl(args.ObjectPrefix + image)
-	if err != nil {
-		return err
-	}
-	defer overlayRef.Close()
-
-	if percent > 0 {
-		if err = overlayRef.Resize(float64(percent)/100, vips.KernelAuto); err != nil {
-			return err
-		}
-	}
+	fill, padx, pady int) (err error) {
 
 	// change overlay colorspace
 	if opacity >= 0 && opacity < 100 {
@@ -163,44 +147,44 @@ func (w *Watermark) composite(
 	return args.Img.Composite(overlayRef, vips.BlendModeOver, x, y)
 }
 
-func (*Watermark) label(
-	args *types.CmdArgs,
-	bgInfo *vips.ImageMetadata,
-	text, fontType, fontColor string,
-	fontSize float64, fontShadow, fontRotate, fill int,
-	x, y int, g string, opacity int) error {
-
-	width, height := itext.CalculateTextBoxSize(text, fontSize)
-	lp := &vips.LabelParams{
-		Text:      text,
-		Font:      fontType,
-		Width:     vips.ValueOf(width),
-		Height:    vips.ValueOf(height),
-		Alignment: vips.AlignCenter,
+func (w *Watermark) loadImageRef(args *types.CmdArgs, imagePath string, percent int) (*vips.ImageRef, error) {
+	ref, _, err := loader.LoadWithUrl(args.ObjectPrefix + imagePath)
+	if err != nil {
+		return nil, err
 	}
 
-	// set color
-	if fontColor != "" {
-		c, err := color.Hex2RGB(fontColor)
-		if err != nil {
-			log.Printf("parse font color with error: %v", err)
-			return err
+	if percent > 0 {
+		if err = ref.Resize(float64(percent)/100, vips.KernelAuto); err != nil {
+			ref.Close()
+			return nil, err
 		}
-		lp.Color = c
 	}
 
-	x, y = getRealOffset(bgInfo.Width, bgInfo.Height, x, y, g, &vips.ImageMetadata{
-		Width:  int(lp.Width.Value),
-		Height: int(lp.Height.Value),
-	})
-	lp.OffsetX = vips.ValueOf(float64(x))
-	lp.OffsetY = vips.ValueOf(float64(y))
+	return ref, nil
+}
 
-	if opacity >= 0 && opacity <= 100 {
-		lp.Opacity = float32(opacity) / 100
+func (w *Watermark) genTextRef(content string, fontSize int, fontFamily, fontColor string, fontOpacity, _ int) (*vips.ImageRef, error) {
+	width, height := text.CalculateTextBoxSize(content, fontSize)
+	// genearate tspan
+	var tspanXml string
+	for index, line := range strings.Split(content, "\n") {
+		tspanXml += fmt.Sprintf(`<tspan x="0" y="%d">%s</tspan>`, (index+1)*(fontSize*11/10), line)
 	}
 
-	return args.Img.Label(lp)
+	if len(fontColor) == 6 && fontOpacity < 100 && fontOpacity >= 0 {
+		fontColor += fmt.Sprintf("%0x", fontOpacity*255/100)
+	}
+
+	svgXml := fmt.Sprintf(`
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d">
+	  <text style="font-family: %s;
+				   font-size  : %d;
+				   fill       : #%s;">
+		%s
+	  </text>
+	</svg>`, width, height, fontFamily, fontSize, fontColor, tspanXml)
+
+	return vips.NewImageFromBuffer([]byte(svgXml))
 }
 
 func (w *Watermark) fill(args *types.CmdArgs, overlayRef *vips.ImageRef, overlayInfo *vips.ImageMetadata, padx, pady int) error {

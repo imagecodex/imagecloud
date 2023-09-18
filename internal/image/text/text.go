@@ -4,10 +4,9 @@ import (
 	"unicode"
 )
 
-func CalculateTextBoxSize(str string, fs float64) (width, height float64) {
-	lineHeight := fs * 0.75
-
-	var lineCount, wPx, mwPx float64
+func CalculateTextBoxSize(str string, fs int) (width, height int) {
+	var wPx, mwPx int
+	var lineCount = 1
 	for _, v := range str {
 		switch {
 		case v == '\n':
@@ -28,7 +27,7 @@ func CalculateTextBoxSize(str string, fs float64) (width, height float64) {
 		mwPx = wPx
 	}
 
-	width = mwPx * lineHeight * 0.5
-	height = lineHeight*(lineCount+1) + 5*lineCount
+	width = mwPx * fs * 58 / 100
+	height = fs * 125 / 100 * lineCount
 	return
 }
