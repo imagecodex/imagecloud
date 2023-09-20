@@ -20,13 +20,14 @@ type Watermark string
 func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 	var (
 		// normal params
-		x, y int
-		g    = "se"
-		t    = 100
+		x, y             int
+		g                = "se"
+		opacity          = 100
+		fill, padx, pady int
 
 		// image water params
-		image string
-		p     int
+		image   string
+		percent int
 
 		// text water params
 		text       string
@@ -35,7 +36,6 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		fontSize   float64
 		fontShadow int
 		fontRotate int
-		fill       int
 	)
 
 	for _, param := range args.Params {
@@ -53,12 +53,12 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		case "g":
 			g = splits[1]
 		case "t":
-			t, err = strconv.Atoi(splits[1])
+			opacity, err = strconv.Atoi(splits[1])
 		// parse image params
 		case "image":
 			image, err = base64UrlDecodeString(splits[1])
 		case "P":
-			p, err = strconv.Atoi(splits[1])
+			percent, err = strconv.Atoi(splits[1])
 		// parse text params
 		case "text":
 			text, err = base64UrlDecodeString(splits[1])
@@ -74,6 +74,10 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 			fontRotate, err = strconv.Atoi(splits[1])
 		case "fill":
 			fill, err = strconv.Atoi(splits[1])
+		case "padx":
+			padx, err = strconv.Atoi(splits[1])
+		case "pady":
+			pady, err = strconv.Atoi(splits[1])
 		}
 
 		if err != nil {
@@ -86,58 +90,77 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		return
 	}
 
-	metadata := args.Img.Metadata()
-	imgWidth, imgHeight := metadata.Width, metadata.Height
-	x = ensureInRange(0, imgWidth, x)
-	y = ensureInRange(0, imgHeight, y)
+	imgInfo := &vips.ImageMetadata{
+		Width:  args.Img.Width(),
+		Height: args.Img.GetPageHeight(),
+	}
+
+	x = ensureInRange(0, imgInfo.Width, x)
+	y = ensureInRange(0, imgInfo.Height, y)
 
 	if image != "" {
-		err = w.composite(args, metadata, image, p, x, y, g, t)
+		err = w.composite(args, imgInfo, image, percent, x, y, g, opacity, fill, padx, pady)
 		return
 	}
 
 	err = w.label(
 		args,
-		metadata,
+		imgInfo,
 		text,
 		fontType, fontColor, fontSize,
-		fontShadow, fontRotate, fill, x, y, g, t,
+		fontShadow, fontRotate, fill, x, y, g, opacity,
 	)
 
 	return nil, err
 }
 
-func (*Watermark) composite(
+func (w *Watermark) composite(
 	args *types.CmdArgs,
 	bgInfo *vips.ImageMetadata,
-	image string, p int,
+	image string, percent int,
 	x, y int, g string,
-	t int) error {
+	opacity int,
+	fill, padx, pady int) error {
 
 	if !strings.HasPrefix(image, "/") {
 		image = "/" + image
 	}
 
-	imageRef, _, err := loader.LoadWithUrl(args.ObjectPrefix + image)
+	overlayRef, _, err := loader.LoadWithUrl(args.ObjectPrefix + image)
 	if err != nil {
 		return err
 	}
-	defer imageRef.Close()
+	defer overlayRef.Close()
 
-	if p > 0 {
-		if err = imageRef.Resize(float64(p)/100, vips.KernelAuto); err != nil {
+	if percent > 0 {
+		if err = overlayRef.Resize(float64(percent)/100, vips.KernelAuto); err != nil {
 			return err
 		}
 	}
 
-	x, y = getRealOffset(bgInfo.Width, bgInfo.Height, x, y, g, imageRef.Metadata())
+	// change overlay colorspace
+	if opacity >= 0 && opacity < 100 {
+		if err = overlayRef.ToColorSpace(vips.InterpretationSRGB); err != nil {
+			return err
+		}
 
-	mod := vips.BlendModeOver
-	if t < 80 && t > 50 {
-		mod = vips.BlendModeScreen
+		if err := overlayRef.Linear1(float64(opacity)/100, 0); err != nil {
+			return err
+		}
 	}
 
-	return args.Img.Composite(imageRef, mod, x, y)
+	overlayBox := &vips.ImageMetadata{
+		Width:  overlayRef.Width(),
+		Height: overlayRef.GetPageHeight(),
+	}
+
+	// with fill mode
+	if fill == 1 {
+		return w.fill(args, overlayRef, overlayBox, padx, pady)
+	}
+
+	x, y = getRealOffset(bgInfo.Width, bgInfo.Height, x, y, g, overlayBox)
+	return args.Img.Composite(overlayRef, vips.BlendModeOver, x, y)
 }
 
 func (*Watermark) label(
@@ -145,7 +168,7 @@ func (*Watermark) label(
 	bgInfo *vips.ImageMetadata,
 	text, fontType, fontColor string,
 	fontSize float64, fontShadow, fontRotate, fill int,
-	x, y int, g string, t int) error {
+	x, y int, g string, opacity int) error {
 
 	width, height := itext.CalculateTextBoxSize(text, fontSize)
 	lp := &vips.LabelParams{
@@ -173,9 +196,27 @@ func (*Watermark) label(
 	lp.OffsetX = vips.ValueOf(float64(x))
 	lp.OffsetY = vips.ValueOf(float64(y))
 
-	if t > 0 {
-		lp.Opacity = float32(t) / 100
+	if opacity >= 0 && opacity <= 100 {
+		lp.Opacity = float32(opacity) / 100
 	}
 
 	return args.Img.Label(lp)
+}
+
+func (w *Watermark) fill(args *types.CmdArgs, overlayRef *vips.ImageRef, overlayInfo *vips.ImageMetadata, padx, pady int) error {
+	maxWidth := args.Img.Width()
+	maxHeight := args.Img.PageHeight()
+
+	var x, y int
+	for y < maxHeight {
+		for x < maxWidth {
+			if err := args.Img.Composite(overlayRef, vips.BlendModeOver, x, y); err != nil {
+				return err
+			}
+			x += overlayInfo.Width + padx
+		}
+		x = 0
+		y += overlayInfo.Height + pady
+	}
+	return nil
 }
