@@ -4,7 +4,7 @@ build:
 build-vips:
 	docker build -f Dockerfile.vips -t songjiayang/govips:v0.3.0 .
 dev:
-	docker run --rm --name imagecloud-dev -d -p 8080:8080 songjiayang/imagecloud:dev  
+	docker run --rm --name imagecloud-dev -d -p 8080:8080 -p 8081:8080 songjiayang/imagecloud:dev  
 	open http://localhost:8080/example.jpg?x-amz-process=image/resize,w_800
 stop:
 	docker stop imagecloud-dev

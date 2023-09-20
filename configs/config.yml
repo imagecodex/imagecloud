@@ -4,6 +4,6 @@ enable_sites:
     endpoint: https://oss-cn-hangzhou.aliyuncs.com
     bucket: image-demo
   # bucket domain support
-  # localhost:8080:
-  #   vendor: aliyun
-  #   endpoint: https://oss-console-img-demo-cn-hangzhou-3az.oss-cn-hangzhou.aliyuncs.com
+  localhost:8081:
+    vendor: aliyun
+    endpoint: https://oss-console-img-demo-cn-hangzhou-3az.oss-cn-hangzhou.aliyuncs.com
