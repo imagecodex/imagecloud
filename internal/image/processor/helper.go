@@ -16,7 +16,7 @@ func base64UrlDecodeString(encodedStr string) (string, error) {
 		buf, err = base64.RawURLEncoding.DecodeString(encodedStr)
 	}
 
-	return string(buf), nil
+	return string(buf), err
 }
 
 func getRealOffset(imgWidth, imgHeight, x, y int, g string, box *vips.ImageMetadata) (int, int) {
