@@ -151,7 +151,8 @@ func (w *Watermark) composite(
 }
 
 func (w *Watermark) loadImageRef(args *types.CmdArgs, imagePath string, percent int) (*vips.ImageRef, error) {
-	ref, _, err := loader.LoadWithUrl(args.ObjectPrefix + imagePath)
+	waterImageUrl := fmt.Sprintf("%s/%s", args.ObjectPrefix, imagePath)
+	ref, _, err := loader.LoadWithUrl(waterImageUrl)
 	if err != nil {
 		return nil, err
 	}
