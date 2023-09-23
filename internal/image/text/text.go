@@ -27,7 +27,7 @@ func CalculateTextBoxSize(str string, fs int) (width, height int) {
 		mwPx = wPx
 	}
 
-	width = mwPx * fs * 58 / 100
-	height = fs * 125 / 100 * lineCount
+	width = mwPx * fs * 56 / 100
+	height = fs * 135 / 100 * lineCount
 	return
 }

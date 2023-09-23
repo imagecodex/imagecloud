@@ -13,6 +13,12 @@ func base64UrlDecodeString(encodedStr string) (string, error) {
 
 	buf, err := base64.StdEncoding.DecodeString(encodedStr)
 	if err != nil {
+		buf, err = base64.URLEncoding.DecodeString(encodedStr)
+	}
+	if err != nil {
+		buf, err = base64.RawStdEncoding.DecodeString(encodedStr)
+	}
+	if err != nil {
 		buf, err = base64.RawURLEncoding.DecodeString(encodedStr)
 	}
 

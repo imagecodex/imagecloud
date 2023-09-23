@@ -29,12 +29,12 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		percent int
 
 		// text water params
-		text        string
-		fontFamily  string = "OPPOSans-M"
-		fontColor   string = "000000"
-		fontSize    int    = 40
-		fontOpacity int    = 100
-		fontRotate  int
+		text       string
+		fontFamily string = "OPPOSans M"
+		fontColor  string = "000000"
+		fontSize   int    = 40
+		fontShadow int
+		fontRotate int
 	)
 
 	for _, param := range args.Params {
@@ -68,7 +68,7 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 		case "size":
 			fontSize, err = strconv.Atoi(splits[1])
 		case "shadow":
-			fontOpacity, err = strconv.Atoi(splits[1])
+			fontShadow, err = strconv.Atoi(splits[1])
 		case "rotate":
 			fontRotate, err = strconv.Atoi(splits[1])
 		case "fill":
@@ -101,7 +101,10 @@ func (w *Watermark) Process(args *types.CmdArgs) (info *metadata.Info, err error
 	if image != "" {
 		overlayRef, err = w.loadImageRef(args, image, percent)
 	} else {
-		overlayRef, err = w.genTextRef(text, fontSize, fontFamily, fontColor, fontOpacity, fontRotate)
+		overlayRef, err = w.genTextRef(
+			text, fontSize, fontFamily, fontColor,
+			opacity, fontShadow, fontRotate,
+		)
 	}
 	if err != nil {
 		return
@@ -163,12 +166,15 @@ func (w *Watermark) loadImageRef(args *types.CmdArgs, imagePath string, percent 
 	return ref, nil
 }
 
-func (w *Watermark) genTextRef(content string, fontSize int, fontFamily, fontColor string, fontOpacity, _ int) (*vips.ImageRef, error) {
+func (w *Watermark) genTextRef(
+	content string, fontSize int, fontFamily,
+	fontColor string, fontOpacity, _, _ int) (*vips.ImageRef, error) {
 	width, height := text.CalculateTextBoxSize(content, fontSize)
 	// genearate tspan
 	var tspanXml string
 	for index, line := range strings.Split(content, "\n") {
-		tspanXml += fmt.Sprintf(`<tspan x="0" y="%d">%s</tspan>`, (index+1)*(fontSize*11/10), line)
+		tspanY := (index+1)*(fontSize*135/100) - int(float64(fontSize)*0.35)
+		tspanXml += fmt.Sprintf(`<tspan x="0" y="%d">%s</tspan>`, tspanY, line)
 	}
 
 	if len(fontColor) == 6 && fontOpacity < 100 && fontOpacity >= 0 {
@@ -178,11 +184,15 @@ func (w *Watermark) genTextRef(content string, fontSize int, fontFamily, fontCol
 	svgXml := fmt.Sprintf(`
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d">
 	  <text style="font-family: %s;
-				   font-size  : %d;
+				   font-size  : %dpx;
 				   fill       : #%s;">
 		%s
 	  </text>
-	</svg>`, width, height, fontFamily, fontSize, fontColor, tspanXml)
+	</svg>`,
+		width, height,
+		fontFamily, fontSize, fontColor,
+		tspanXml,
+	)
 
 	return vips.NewImageFromBuffer([]byte(svgXml))
 }
