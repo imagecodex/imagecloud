@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/davidbyttow/govips/v2/vips"
-
 	"github.com/songjiayang/imagecloud/internal/image/metadata"
 	"github.com/songjiayang/imagecloud/internal/image/processor/types"
 )
@@ -18,27 +17,24 @@ func (*Rotate) Process(args *types.CmdArgs) (info *metadata.Info, err error) {
 		return nil, errors.New("invalid rotate params")
 	}
 
-	value, err := strconv.ParseInt(args.Params[0], 10, 64)
+	angle, err := strconv.Atoi(args.Params[0])
 	if err != nil {
 		return nil, err
 	}
 
-	var angle vips.Angle
-
-	switch value {
-	case 0, 360:
-		angle = vips.Angle0
-	case 90:
-		angle = vips.Angle90
-	case 180:
-		angle = vips.Angle180
-	case 270:
-		angle = vips.Angle270
-	default:
-		return nil, errors.New("rotate angle support (0, 90, 180, 270) only")
+	if angle < 0 || angle > 360 {
+		return nil, errors.New("rotate angle should be in range [0,360]")
 	}
 
 	log.Printf("rotate image with angle %d", angle)
 
-	return nil, args.Img.Rotate(angle)
+	switch angle {
+	case 0:
+		// nothing to do
+		return nil, nil
+	case 90, 180, 270:
+		return nil, args.Img.Rotate(vips.Angle(angle / 90))
+	default:
+		return nil, args.Img.RotateAny(float64(angle), nil)
+	}
 }
