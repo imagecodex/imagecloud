@@ -70,6 +70,7 @@ The params details please check [Aliyun OSS image preocess doc](https://help.ali
 - [x] bright
 - [x] sharpen
 - [x] contrast
+- [x] gray
 
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud?ref=badge_large)

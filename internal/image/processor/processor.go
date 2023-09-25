@@ -36,6 +36,7 @@ func init() {
 			"bright":          new(Bright),
 			"sharpen":         new(Sharpen),
 			"contrast":        new(Contrast),
+			"gray":            new(Gray),
 		}
 	})
 }
