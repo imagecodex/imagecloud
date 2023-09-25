@@ -92,8 +92,8 @@ func (i *Image) process(c *gin.Context, args *types.CmdArgs) {
 	}
 	i.logger.Log("msg", "image process", "cmds", pQuery)
 
-	// add defautl jpg export params
-	ep := vips.NewDefaultJPEGExportParams()
+	// default export params with original format
+	ep := vips.NewDefaultExportParams()
 	ep.Quality = 75
 	ep.Format = args.Img.Metadata().Format
 	args.Ep = ep
