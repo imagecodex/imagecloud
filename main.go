@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kit/log"
 
-	"github.com/songjiayang/imagecloud/api/server"
-	"github.com/songjiayang/imagecloud/internal/config"
+	"github.com/imagecodex/imagecloud/api/server"
+	"github.com/imagecodex/imagecloud/internal/config"
 )
 
 var (

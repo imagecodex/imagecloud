@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/songjiayang/imagecloud/internal/metrics"
+	"github.com/imagecodex/imagecloud/internal/metrics"
 )
 
 func Duration(ctx *gin.Context) {

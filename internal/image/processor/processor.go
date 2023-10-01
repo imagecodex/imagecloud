@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/songjiayang/imagecloud/internal/image/metadata"
-	"github.com/songjiayang/imagecloud/internal/image/processor/types"
+	"github.com/imagecodex/imagecloud/internal/image/metadata"
+	"github.com/imagecodex/imagecloud/internal/image/processor/types"
 )
 
 type Processor interface {

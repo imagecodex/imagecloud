@@ -1,6 +1,6 @@
 # imagecloud
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/songjiayang/imagecloud)](https://goreportcard.com/report/github.com/songjiayang/imagecloud)
+[![Go Report Card](https://goreportcard.com/badge/github.com/imagecodex/imagecloud)](https://goreportcard.com/report/github.com/imagecodex/imagecloud)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsongjiayang%2Fimagecloud?ref=badge_shield)
 
 A image process web server with libvips.

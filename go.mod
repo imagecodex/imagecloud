@@ -1,4 +1,4 @@
-module github.com/songjiayang/imagecloud
+module github.com/imagecodex/imagecloud
 
 go 1.20
 

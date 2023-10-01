@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-kit/log"
 
-	"github.com/songjiayang/imagecloud/internal/config"
-	"github.com/songjiayang/imagecloud/internal/image/loader"
-	"github.com/songjiayang/imagecloud/internal/image/processor"
-	"github.com/songjiayang/imagecloud/internal/image/processor/types"
+	"github.com/imagecodex/imagecloud/internal/config"
+	"github.com/imagecodex/imagecloud/internal/image/loader"
+	"github.com/imagecodex/imagecloud/internal/image/processor"
+	"github.com/imagecodex/imagecloud/internal/image/processor/types"
 )
 
 type Image struct {
