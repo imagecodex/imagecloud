@@ -8,10 +8,10 @@ import (
 
 	"github.com/davidbyttow/govips/v2/vips"
 
-	"github.com/songjiayang/imagecloud/internal/image/loader"
-	"github.com/songjiayang/imagecloud/internal/image/metadata"
-	"github.com/songjiayang/imagecloud/internal/image/processor/types"
-	"github.com/songjiayang/imagecloud/internal/image/text"
+	"github.com/imagecodex/imagecloud/internal/image/loader"
+	"github.com/imagecodex/imagecloud/internal/image/metadata"
+	"github.com/imagecodex/imagecloud/internal/image/processor/types"
+	"github.com/imagecodex/imagecloud/internal/image/text"
 )
 
 type Watermark string

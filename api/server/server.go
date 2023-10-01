@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-kit/log"
 
-	"github.com/songjiayang/imagecloud/api/handler"
-	"github.com/songjiayang/imagecloud/internal/config"
-	"github.com/songjiayang/imagecloud/internal/metrics"
-	"github.com/songjiayang/imagecloud/internal/middleware"
+	"github.com/imagecodex/imagecloud/api/handler"
+	"github.com/imagecodex/imagecloud/internal/config"
+	"github.com/imagecodex/imagecloud/internal/metrics"
+	"github.com/imagecodex/imagecloud/internal/middleware"
 )
 
 type Server struct {

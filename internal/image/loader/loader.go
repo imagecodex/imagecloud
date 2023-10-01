@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/davidbyttow/govips/v2/vips"
-	"github.com/songjiayang/imagecloud/internal/metrics"
+	"github.com/imagecodex/imagecloud/internal/metrics"
 )
 
 func LoadWithUrl(url string) (ref *vips.ImageRef, statsCode int, err error) {
