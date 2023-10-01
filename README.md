@@ -18,7 +18,7 @@ A image process web server with libvips.
 ## Usage
 
 ```
-docker run -itd --name imagecloud -p 8080:8080 songjiayang/imagecloud:v0.1
+docker run -itd --name imagecloud -p 8080:8080 imagecodex/imagecloud:main
 ```
 
 when docker run successful, send the request to server with `x-amz-process` or `x-oss-process` query params.
