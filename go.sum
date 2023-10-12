@@ -32,8 +32,8 @@ github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
-github.com/imagecodex/govips/v2 v2.0.0-20230924154547-677fb1d05a6b h1:7bOMAt9cAjs8eRoR3Mfog7TRywFBCtDi4OI1/xtSVxA=
-github.com/imagecodex/govips/v2 v2.0.0-20230924154547-677fb1d05a6b/go.mod h1:LPTrwWtNa5n4yl9UC52YBOEGdZcY5hDTP4Ms2QWasTw=
+github.com/imagecodex/govips/v2 v2.0.0-20231012154149-49875deacf2d h1:2G+XPv959GsvJkuxo2G16drQTQJOpWbjxpEUDDV5r1E=
+github.com/imagecodex/govips/v2 v2.0.0-20231012154149-49875deacf2d/go.mod h1:LPTrwWtNa5n4yl9UC52YBOEGdZcY5hDTP4Ms2QWasTw=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
