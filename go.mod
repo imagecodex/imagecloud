@@ -48,4 +48,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-replace github.com/davidbyttow/govips/v2 => github.com/imagecodex/govips/v2 v2.0.0-20230924154547-677fb1d05a6b
+replace github.com/davidbyttow/govips/v2 => github.com/imagecodex/govips/v2 v2.0.0-20231012154149-49875deacf2d
